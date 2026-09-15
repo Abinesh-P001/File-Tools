@@ -152,6 +152,36 @@ export class ToolUI {
     }
 
     /**
+     * Update progress bar percentage (0-100) and status message
+     * Supports both determinate (0-100%) and indeterminate processing states
+     * @param {number|null} percent - 0 to 100, or null for indeterminate
+     * @param {string} [customMessage] - Status text to display to user
+     */
+    setProgress(percent = null, customMessage = null) {
+        if (this.el.progressSection) {
+            this.el.progressSection.style.display = 'block';
+        }
+        if (this.el.progressBar) {
+            if (percent !== null && !isNaN(percent)) {
+                const clamped = Math.min(100, Math.max(0, Math.round(percent)));
+                this.el.progressBar.style.width = `${clamped}%`;
+                this.el.progressBar.classList.remove('is-indeterminate');
+            } else {
+                this.el.progressBar.classList.add('is-indeterminate');
+            }
+        }
+        if (this.el.progressText) {
+            if (customMessage) {
+                this.el.progressText.textContent = customMessage;
+            } else if (percent !== null && !isNaN(percent)) {
+                this.el.progressText.textContent = `Processing... ${Math.round(percent)}%`;
+            } else {
+                this.el.progressText.textContent = 'Processing locally in your browser...';
+            }
+        }
+    }
+
+    /**
      * Set processing state with optional percentage
      * @param {boolean} isProcessing
      * @param {number|null} [percent=null]
@@ -169,15 +199,7 @@ export class ToolUI {
                     <span>Processing in browser...</span>
                 `;
             }
-            if (this.el.progressSection) {
-                this.el.progressSection.style.display = 'block';
-            }
-            if (this.el.progressBar && percent !== null) {
-                this.el.progressBar.style.width = `${Math.min(100, Math.max(0, percent))}%`;
-            }
-            if (this.el.progressText) {
-                this.el.progressText.textContent = customMessage || (percent !== null ? `Processing... ${percent}%` : 'Processing locally in your browser...');
-            }
+            this.setProgress(percent, customMessage);
         } else {
             if (this.el.processBtn) {
                 this.el.processBtn.disabled = false;
@@ -187,6 +209,13 @@ export class ToolUI {
             }
             if (this.el.progressSection) {
                 this.el.progressSection.style.display = 'none';
+            }
+            if (this.el.progressBar) {
+                this.el.progressBar.style.width = '0%';
+                this.el.progressBar.classList.remove('is-indeterminate');
+            }
+            if (this.el.progressText) {
+                this.el.progressText.textContent = '';
             }
         }
     }
@@ -270,6 +299,7 @@ export class ToolUI {
         this.resultBlob = null;
         this.resultFilename = '';
 
+        this.setProcessing(false);
         if (this.el.fileInput) {
             this.el.fileInput.value = '';
         }
