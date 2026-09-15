@@ -255,3 +255,106 @@ export async function cropImage(file, crop, format = 'image/jpeg', quality = 0.9
         height: cropHeight
     };
 }
+
+/**
+ * Convert an image between JPG, PNG, and WebP formats
+ * @param {File|Blob} file
+ * @param {Object} options
+ * @param {string} options.targetFormat - 'image/webp' | 'image/jpeg' | 'image/png'
+ * @param {number} [options.quality=0.9] - 0.1 to 1.0
+ * @param {string} [options.background='#FFFFFF'] - For JPG when converting from transparent PNG/WEBP
+ * @returns {Promise<{ blob: Blob, filename: string, width: number, height: number }>}
+ */
+export async function convertImageFormat(file, options = {}) {
+    const targetFormat = options.targetFormat || 'image/webp';
+    const quality = options.quality !== undefined ? options.quality : 0.9;
+    const background = options.background || '#FFFFFF';
+
+    const img = await loadImage(file);
+    const canvas = document.createElement('canvas');
+    canvas.width = img.naturalWidth || img.width;
+    canvas.height = img.naturalHeight || img.height;
+
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
+    if (targetFormat === 'image/jpeg') {
+        ctx.fillStyle = background;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    ctx.drawImage(img, 0, 0);
+
+    const blob = await new Promise((resolve, reject) => {
+        canvas.toBlob(b => {
+            if (b) resolve(b);
+            else reject(new Error(`Failed to convert image to ${targetFormat}`));
+        }, targetFormat, quality);
+    });
+
+    const base = getBaseFilename(file.name || 'converted');
+    let ext = 'webp';
+    if (targetFormat === 'image/jpeg') ext = 'jpg';
+    else if (targetFormat === 'image/png') ext = 'png';
+
+    return {
+        blob,
+        filename: `${base}.${ext}`,
+        width: canvas.width,
+        height: canvas.height
+    };
+}
+
+/**
+ * Rotate and Flip Image
+ * @param {File|Blob} file
+ * @param {number} degrees - 0, 90, 180, 270
+ * @param {boolean} [flipH=false]
+ * @param {boolean} [flipV=false]
+ * @param {string} [format]
+ * @returns {Promise<{ blob: Blob, filename: string, width: number, height: number }>}
+ */
+export async function rotateImage(file, degrees = 90, flipH = false, flipV = false, format) {
+    const img = await loadImage(file);
+    const origWidth = img.naturalWidth || img.width;
+    const origHeight = img.naturalHeight || img.height;
+
+    const rad = (degrees % 360) * Math.PI / 180;
+    const isSideways = degrees % 180 !== 0;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = isSideways ? origHeight : origWidth;
+    canvas.height = isSideways ? origWidth : origHeight;
+
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
+    // Move origin to center
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.rotate(rad);
+    ctx.scale(flipH ? -1 : 1, flipV ? -1 : 1);
+    ctx.drawImage(img, -origWidth / 2, -origHeight / 2);
+
+    const outMime = format || file.type || 'image/jpeg';
+    const blob = await new Promise((resolve, reject) => {
+        canvas.toBlob(b => {
+            if (b) resolve(b);
+            else reject(new Error('Canvas failed to rotate image'));
+        }, outMime, 0.92);
+    });
+
+    const base = getBaseFilename(file.name || 'rotated');
+    let ext = 'jpg';
+    if (outMime.includes('png')) ext = 'png';
+    else if (outMime.includes('webp')) ext = 'webp';
+
+    return {
+        blob,
+        filename: `${base}-rotated.${ext}`,
+        width: canvas.width,
+        height: canvas.height
+    };
+}
+

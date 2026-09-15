@@ -3,16 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word (DOCX) to PDF Converter — 100% Client-Side | FILETOOLS</title>
-    <meta name="description" content="Convert Word documents (.docx) to PDF format directly in your browser. Fast, private, zero server uploads.">
+    <title>Universal Image Converter — JPG, PNG, WEBP | FILETOOLS</title>
+    <meta name="description" content="Convert between JPG, PNG, and WEBP formats directly in your browser. 100% private, zero uploads.">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/tool.css">
     <link rel="stylesheet" href="../css/responsive.css">
-    <!-- Local Mammoth, html2pdf, PDF-Lib & PDF.js -->
-    <script src="../libraries/mammoth.browser.min.js"></script>
-    <script src="../libraries/html2pdf.bundle.min.js"></script>
-    <script src="../libraries/pdf-lib.min.js"></script>
-    <script src="../libraries/pdf.min.js"></script>
 </head>
 <body>
 
@@ -39,16 +34,16 @@
             <nav class="breadcrumb-nav" aria-label="Breadcrumb">
                 <a href="../index.html">Home</a>
                 <span class="breadcrumb-sep">/</span>
-                <a href="../index.html#tools">Word & Docs</a>
+                <a href="../index.html#tools">Image Tools</a>
                 <span class="breadcrumb-sep">/</span>
-                <span>Word to PDF</span>
+                <span>Image Format Converter</span>
             </nav>
 
             <div class="tool-header">
-                <div class="tool-header-badge">Mammoth + PDF-Lib Engine</div>
-                <h1 class="tool-header-title">Word (DOCX) to PDF</h1>
+                <div class="tool-header-badge">JPG • PNG • WEBP Engine</div>
+                <h1 class="tool-header-title">Universal Image Converter</h1>
                 <p class="tool-header-desc">
-                    Convert Word documents into cleanly formatted PDF documents directly in your browser memory.
+                    Seamlessly convert images between JPG, PNG, and next-gen WebP formats directly on your device.
                 </p>
             </div>
 
@@ -58,23 +53,22 @@
                 <div id="dropzone" class="upload-dropzone">
                     <div class="dropzone-icon-circle">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
                         </svg>
                     </div>
-                    <div class="dropzone-title">Drop your Word (.docx) document here</div>
+                    <div class="dropzone-title">Drop your image here to convert</div>
                     <div class="dropzone-subtitle">or click to browse from your device</div>
                     <button type="button" class="btn-primary" id="selectFileBtn">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
                             <line x1="5" y1="12" x2="19" y2="12"></line>
                         </svg>
-                        <span>SELECT DOCX FILE</span>
+                        <span>SELECT IMAGE</span>
                     </button>
-                    <div class="dropzone-limits">Supported: .docx • Max 40 MB</div>
-                    <input type="file" id="fileInput" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display: none;">
+                    <div class="dropzone-limits">Supported: JPG, PNG, WEBP, GIF, BMP • Max 40 MB</div>
+                    <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/gif,image/bmp" style="display: none;">
                 </div>
 
                 <div id="fileInfoCard" style="display: none;"></div>
@@ -83,20 +77,30 @@
                     <div class="options-panel">
                         <div class="options-heading">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <line x1="12" y1="16" x2="12" y2="12"></line>
-                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                             </svg>
-                            <span>Format Notice</span>
+                            <span>Target Format & Quality</span>
                         </div>
-                        <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6;">
-                            Legacy binary .doc format is not supported in this client-side version. Please upload standard modern .docx files.
-                        </p>
+                        <div class="options-grid">
+                            <div class="option-field">
+                                <label class="field-label" for="targetFormat">Output Format</label>
+                                <select id="targetFormat" class="field-select">
+                                    <option value="image/webp" selected>WebP (Next-Gen, High Compression)</option>
+                                    <option value="image/png">PNG (Lossless Fidelity)</option>
+                                    <option value="image/jpeg">JPG / JPEG (Universal)</option>
+                                </select>
+                            </div>
+                            <div class="option-field" id="qualityWrapper">
+                                <label class="field-label" for="qualitySlider">Quality: <span id="qualityVal">90%</span></label>
+                                <input type="range" id="qualitySlider" min="10" max="100" value="90" class="field-slider" style="width: 100%;">
+                            </div>
+                        </div>
                     </div>
 
                     <div class="action-controls">
                         <button type="button" id="processBtn" class="btn-primary">
-                            <span>CONVERT TO PDF</span>
+                            <span>CONVERT IMAGE</span>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="9 18 15 12 9 6"></polyline>
                             </svg>
@@ -108,7 +112,7 @@
                     <div class="progress-bar-container">
                         <div id="progressBar" class="progress-bar-fill" style="width: 100%;"></div>
                     </div>
-                    <div id="progressText" class="progress-text">Parsing DOCX & generating PDF...</div>
+                    <div id="progressText" class="progress-text">Encoding image format...</div>
                 </div>
 
                 <div id="resultSection" class="result-section" style="display: none;">
@@ -117,19 +121,13 @@
                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                             <polyline points="22 4 12 14.01 9 11.01"></polyline>
                         </svg>
-                        <span>PDF Generated Successfully!</span>
+                        <span>Image Converted Successfully!</span>
                     </div>
 
                     <div class="result-stats"></div>
 
-                    <div id="pdfPreviewContainer" style="margin: 1.5rem 0; width: 100%;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">
-                            <span>📄 Interactive Document Preview</span>
-                            <span id="previewMeta">Ready to Download</span>
-                        </div>
-                        <div style="border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border-glass); background: #1e222d; box-shadow: var(--shadow-sm);">
-                            <iframe id="pdfPreviewFrame" title="Generated PDF Preview" style="width: 100%; height: 460px; border: none; background: #ffffff;"></iframe>
-                        </div>
+                    <div style="margin: 1.5rem 0; text-align: center;">
+                        <img id="convertedPreviewImg" style="max-width: 100%; max-height: 380px; object-fit: contain; border-radius: var(--radius-sm); border: 1px solid var(--border-glass); background: #1a1d24; box-shadow: var(--shadow-sm);">
                     </div>
 
                     <div class="result-actions">
@@ -139,7 +137,7 @@
                                 <polyline points="7 10 12 15 17 10"></polyline>
                                 <line x1="12" y1="15" x2="12" y2="3"></line>
                             </svg>
-                            <span>DOWNLOAD PDF</span>
+                            <span>DOWNLOAD CONVERTED IMAGE</span>
                         </button>
                         <button type="button" id="resetBtn" class="btn-secondary">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -163,7 +161,7 @@
 
     <script type="module">
         import { ToolUI } from '../js/ui.js';
-        import { wordToPdf } from '../js/document-tools.js';
+        import { convertImageFormat } from '../js/image-tools.js';
         import { triggerDownload } from '../js/download.js';
         import { formatBytes } from '../js/file-utils.js';
 
@@ -182,28 +180,41 @@
             errorAlert: document.getElementById('errorAlert')
         });
 
-        const previewFrame = document.getElementById('pdfPreviewFrame');
-        let currentPreviewUrl = null;
+        const targetFormatSelect = document.getElementById('targetFormat');
+        const qualitySlider = document.getElementById('qualitySlider');
+        const qualityVal = document.getElementById('qualityVal');
+        const qualityWrapper = document.getElementById('qualityWrapper');
+        const convertedPreviewImg = document.getElementById('convertedPreviewImg');
+
         let selectedFile = null;
+        let previewObjectUrl = null;
 
         document.getElementById('selectFileBtn').addEventListener('click', (e) => {
             e.stopPropagation();
             document.getElementById('fileInput').click();
         });
 
+        qualitySlider.addEventListener('input', () => {
+            qualityVal.textContent = `${qualitySlider.value}%`;
+        });
+
+        targetFormatSelect.addEventListener('change', () => {
+            qualityWrapper.style.display = (targetFormatSelect.value === 'image/png') ? 'none' : 'block';
+        });
+
         function cleanupPreview() {
-            if (currentPreviewUrl) {
-                URL.revokeObjectURL(currentPreviewUrl);
-                currentPreviewUrl = null;
+            if (previewObjectUrl) {
+                URL.revokeObjectURL(previewObjectUrl);
+                previewObjectUrl = null;
             }
-            if (previewFrame) previewFrame.src = 'about:blank';
+            convertedPreviewImg.src = '';
         }
 
         ui.onFilesSelected = (files) => {
             cleanupPreview();
             const file = files[0];
-            if (!file.name.toLowerCase().endsWith('.docx')) {
-                ui.showError('Legacy .doc binary format is not supported in this client-side version. Please upload standard .docx.');
+            if (!file.type.startsWith('image/')) {
+                ui.showError('Please select a valid image file.');
                 return;
             }
             selectedFile = file;
@@ -217,30 +228,33 @@
                 ui.setProcessing(true);
                 cleanupPreview();
 
-                const result = await wordToPdf(selectedFile, (pct, status) => {
-                    ui.setProgress(pct, status);
+                const targetFormat = targetFormatSelect.value;
+                const quality = parseInt(qualitySlider.value, 10) / 100;
+
+                const result = await convertImageFormat(selectedFile, {
+                    targetFormat,
+                    quality
                 });
+
+                previewObjectUrl = URL.createObjectURL(result.blob);
+                convertedPreviewImg.src = previewObjectUrl;
 
                 const stats = ui.el.resultSection.querySelector('.result-stats');
                 if (stats) {
                     stats.innerHTML = `
-                        <div class="stat-pill">Pages: <strong>${result.pageCount} page(s)</strong></div>
+                        <div class="stat-pill">Original: <strong>${formatBytes(selectedFile.size)}</strong></div>
                         <div class="stat-arrow">→</div>
-                        <div class="stat-pill stat-result">PDF File Size: <strong>${formatBytes(result.blob.size)}</strong></div>
+                        <div class="stat-pill stat-result">Converted: <strong>${formatBytes(result.blob.size)}</strong></div>
+                        <div class="stat-pill">Dimensions: <strong>${result.width}×${result.height}px</strong></div>
                     `;
                 }
-
-                // Create and display preview
-                currentPreviewUrl = URL.createObjectURL(result.blob);
-                previewFrame.src = currentPreviewUrl;
-                document.getElementById('previewMeta').textContent = `${result.pageCount} page(s) • ${formatBytes(result.blob.size)}`;
 
                 ui.showResult({
                     blob: result.blob,
                     filename: result.filename
                 });
             } catch (err) {
-                console.error('Word to PDF error:', err);
+                console.error(err);
                 ui.showError('Conversion failed: ' + err.message);
             }
         });

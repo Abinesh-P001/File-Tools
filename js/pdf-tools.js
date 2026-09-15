@@ -478,3 +478,44 @@ export async function compressPdf(pdfFile) {
         compressedSize: blob.size
     };
 }
+
+/**
+ * Reorder pages of a PDF document
+ * @param {File} pdfFile
+ * @param {number[]} newPageOrder - Array of 1-based page numbers in desired sequence (e.g. [3, 1, 2])
+ * @returns {Promise<{ blob: Blob, filename: string, pageCount: number }>}
+ */
+export async function reorderPdfPages(pdfFile, newPageOrder) {
+    if (!pdfFile) throw new Error('No PDF file provided.');
+    if (!newPageOrder || newPageOrder.length === 0) {
+        throw new Error('Please provide the new page order.');
+    }
+
+    const { PDFDocument } = ensurePdfLib();
+    const buffer = await readFileAsArrayBuffer(pdfFile);
+    const sourceDoc = await PDFDocument.load(buffer, { ignoreEncryption: true });
+    const totalPages = sourceDoc.getPageCount();
+
+    const targetIndices = newPageOrder
+        .map(p => p - 1)
+        .filter(idx => idx >= 0 && idx < totalPages);
+
+    if (targetIndices.length === 0) {
+        throw new Error('No valid pages were specified in the reorder list.');
+    }
+
+    const newDoc = await PDFDocument.create();
+    const copiedPages = await newDoc.copyPages(sourceDoc, targetIndices);
+    copiedPages.forEach(p => newDoc.addPage(p));
+
+    const pdfBytes = await newDoc.save();
+    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+    const base = getBaseFilename(pdfFile.name);
+
+    return {
+        blob,
+        filename: `${base}-reordered.pdf`,
+        pageCount: targetIndices.length
+    };
+}
+

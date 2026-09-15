@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word & Text Counter — 100% Client-Side | FILETOOLS</title>
+    <meta name="description" content="Count words, characters, sentences, paragraphs, and reading time in real-time. Private and instant.">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/tool.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="container nav-container">
+            <a href="../index.html" class="brand-logo">
+                <div class="brand-logo-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                </div>
+                <span>FILETOOLS</span>
+            </a>
+            <div class="client-badge-pill">
+                <span class="pulse-dot"></span>
+                <span>100% In-Browser</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="tool-layout">
+        <div class="container">
+            <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+                <a href="../index.html">Home</a>
+                <span class="breadcrumb-sep">/</span>
+                <a href="../index.html#tools">Utilities</a>
+                <span class="breadcrumb-sep">/</span>
+                <span>Text Counter</span>
+            </nav>
+
+            <div class="tool-header">
+                <div class="tool-header-badge">Real-Time Metrics</div>
+                <h1 class="tool-header-title">Word & Text Counter</h1>
+                <p class="tool-header-desc">
+                    Calculate real-time word count, character count, sentences, paragraphs, and estimated speech and reading duration.
+                </p>
+            </div>
+
+            <div class="tool-workspace">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem;">
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: var(--radius-sm); padding: 1rem; text-align: center;">
+                        <div id="statWords" style="font-size: 1.8rem; font-weight: 700; color: var(--primary);">0</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Words</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: var(--radius-sm); padding: 1rem; text-align: center;">
+                        <div id="statChars" style="font-size: 1.8rem; font-weight: 700; color: #a855f7;">0</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Characters</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: var(--radius-sm); padding: 1rem; text-align: center;">
+                        <div id="statCharsNoSpace" style="font-size: 1.8rem; font-weight: 700; color: #38bdf8;">0</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">No Spaces</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: var(--radius-sm); padding: 1rem; text-align: center;">
+                        <div id="statSentences" style="font-size: 1.8rem; font-weight: 700; color: #10b981;">0</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Sentences</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: var(--radius-sm); padding: 1rem; text-align: center;">
+                        <div id="statParagraphs" style="font-size: 1.8rem; font-weight: 700; color: #f59e0b;">0</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Paragraphs</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; font-size: 0.85rem; color: var(--text-muted);">
+                    <span>📖 Reading Time: <strong id="statReadTime" style="color: var(--text-primary);">0 min</strong></span>
+                    <span>🎤 Speaking Time: <strong id="statSpeakTime" style="color: var(--text-primary);">0 min</strong></span>
+                </div>
+
+                <textarea id="textInput" class="field-textarea" style="height: 320px; font-size: 1rem; line-height: 1.6;" placeholder="Type or paste your text here to analyze..."></textarea>
+
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+                    <button type="button" id="copyTextBtn" class="btn-secondary">Copy Text</button>
+                    <button type="button" id="clearTextBtn" class="btn-secondary" style="color: #ef4444;">Clear</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-bottom">
+            <div>&copy; 2026 FILETOOLS. 100% Frontend-Only Architecture.</div>
+            <div><a href="../index.html">Back to All Utilities</a></div>
+        </div>
+    </footer>
+
+    <script type="module">
+        const textInput = document.getElementById('textInput');
+        const statWords = document.getElementById('statWords');
+        const statChars = document.getElementById('statChars');
+        const statCharsNoSpace = document.getElementById('statCharsNoSpace');
+        const statSentences = document.getElementById('statSentences');
+        const statParagraphs = document.getElementById('statParagraphs');
+        const statReadTime = document.getElementById('statReadTime');
+        const statSpeakTime = document.getElementById('statSpeakTime');
+
+        function analyzeText() {
+            const val = textInput.value || '';
+            const charCount = val.length;
+            const noSpaceCount = val.replace(/\s/g, '').length;
+
+            const words = val.trim() ? val.trim().split(/\s+/).filter(Boolean) : [];
+            const wordCount = words.length;
+
+            const sentences = val.trim() ? val.split(/[.!?]+/).map(s => s.trim()).filter(Boolean) : [];
+            const sentenceCount = sentences.length;
+
+            const paragraphs = val.trim() ? val.split(/\n+/).map(p => p.trim()).filter(Boolean) : [];
+            const paragraphCount = paragraphs.length;
+
+            // Reading: ~200 wpm, Speaking: ~130 wpm
+            const readMinutes = Math.ceil(wordCount / 200);
+            const speakMinutes = Math.ceil(wordCount / 130);
+
+            statWords.textContent = wordCount.toLocaleString();
+            statChars.textContent = charCount.toLocaleString();
+            statCharsNoSpace.textContent = noSpaceCount.toLocaleString();
+            statSentences.textContent = sentenceCount.toLocaleString();
+            statParagraphs.textContent = paragraphCount.toLocaleString();
+
+            statReadTime.textContent = wordCount === 0 ? '0 min' : `${readMinutes} min`;
+            statSpeakTime.textContent = wordCount === 0 ? '0 min' : `${speakMinutes} min`;
+        }
+
+        textInput.addEventListener('input', analyzeText);
+
+        document.getElementById('copyTextBtn').addEventListener('click', () => {
+            if (textInput.value) {
+                navigator.clipboard.writeText(textInput.value);
+            }
+        });
+
+        document.getElementById('clearTextBtn').addEventListener('click', () => {
+            textInput.value = '';
+            analyzeText();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Size Converter — 100% Client-Side | FILETOOLS</title>
+    <meta name="description" content="Convert file sizes between Bytes, KB, MB, GB, TB, KiB, MiB, and GiB instantly in your browser.">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/tool.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="container nav-container">
+            <a href="../index.html" class="brand-logo">
+                <div class="brand-logo-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                </div>
+                <span>FILETOOLS</span>
+            </a>
+            <div class="client-badge-pill">
+                <span class="pulse-dot"></span>
+                <span>100% In-Browser</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="tool-layout">
+        <div class="container">
+            <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+                <a href="../index.html">Home</a>
+                <span class="breadcrumb-sep">/</span>
+                <a href="../index.html#tools">Utilities</a>
+                <span class="breadcrumb-sep">/</span>
+                <span>File Size Converter</span>
+            </nav>
+
+            <div class="tool-header">
+                <div class="tool-header-badge">Decimal & Binary Standard</div>
+                <h1 class="tool-header-title">File Size Unit Converter</h1>
+                <p class="tool-header-desc">
+                    Instantly calculate and convert file sizes across standard decimal (1000) and IEC binary (1024) storage units.
+                </p>
+            </div>
+
+            <div class="tool-workspace">
+                <div class="options-panel" style="margin-bottom: 2rem;">
+                    <div class="options-heading">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                        </svg>
+                        <span>Input Value</span>
+                    </div>
+
+                    <div class="options-grid">
+                        <div class="option-field">
+                            <label class="field-label" for="sizeInput">Size Value</label>
+                            <input type="number" id="sizeInput" class="field-input" value="1024" min="0" step="any">
+                        </div>
+                        <div class="option-field">
+                            <label class="field-label" for="unitSelect">Input Unit</label>
+                            <select id="unitSelect" class="field-select">
+                                <option value="B">Bytes (B)</option>
+                                <option value="KB">Kilobytes (KB - 1000)</option>
+                                <option value="KiB" selected>Kibibytes (KiB - 1024)</option>
+                                <option value="MB">Megabytes (MB - 1000²)</option>
+                                <option value="MiB">Mebibytes (MiB - 1024²)</option>
+                                <option value="GB">Gigabytes (GB - 1000³)</option>
+                                <option value="GiB">Gibibytes (GiB - 1024³)</option>
+                                <option value="TB">Terabytes (TB - 1000⁴)</option>
+                                <option value="TiB">Tebibytes (TiB - 1024⁴)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.5rem;">
+                        <h3 style="font-size: 1rem; margin-bottom: 1rem; color: var(--primary);">Decimal Units (Base 1000)</h3>
+                        <div id="decimalResults" style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.9rem;"></div>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.5rem;">
+                        <h3 style="font-size: 1rem; margin-bottom: 1rem; color: #a855f7;">Binary IEC Units (Base 1024)</h3>
+                        <div id="binaryResults" style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.9rem;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-bottom">
+            <div>&copy; 2026 FILETOOLS. 100% Frontend-Only Architecture.</div>
+            <div><a href="../index.html">Back to All Utilities</a></div>
+        </div>
+    </footer>
+
+    <script type="module">
+        const sizeInput = document.getElementById('sizeInput');
+        const unitSelect = document.getElementById('unitSelect');
+        const decimalResults = document.getElementById('decimalResults');
+        const binaryResults = document.getElementById('binaryResults');
+
+        const UNIT_MULTIPLIERS = {
+            'B': 1,
+            'KB': 1000,
+            'KiB': 1024,
+            'MB': 1000 ** 2,
+            'MiB': 1024 ** 2,
+            'GB': 1000 ** 3,
+            'GiB': 1024 ** 3,
+            'TB': 1000 ** 4,
+            'TiB': 1024 ** 4
+        };
+
+        function recalculate() {
+            const val = parseFloat(sizeInput.value);
+            if (isNaN(val) || val < 0) {
+                decimalResults.innerHTML = '<span style="color: var(--text-muted);">Please enter a valid positive number</span>';
+                binaryResults.innerHTML = '';
+                return;
+            }
+
+            const unit = unitSelect.value;
+            const bytes = val * UNIT_MULTIPLIERS[unit];
+
+            // Format decimal
+            decimalResults.innerHTML = `
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.4rem;">
+                    <span style="color: var(--text-muted);">Bytes (B):</span>
+                    <strong>${bytes.toLocaleString()} B</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.4rem;">
+                    <span style="color: var(--text-muted);">Kilobytes (KB):</span>
+                    <strong>${(bytes / 1000).toLocaleString(undefined, { maximumFractionDigits: 4 })} KB</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.4rem;">
+                    <span style="color: var(--text-muted);">Megabytes (MB):</span>
+                    <strong>${(bytes / (1000**2)).toLocaleString(undefined, { maximumFractionDigits: 4 })} MB</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.4rem;">
+                    <span style="color: var(--text-muted);">Gigabytes (GB):</span>
+                    <strong>${(bytes / (1000**3)).toLocaleString(undefined, { maximumFractionDigits: 4 })} GB</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--text-muted);">Terabytes (TB):</span>
+                    <strong>${(bytes / (1000**4)).toLocaleString(undefined, { maximumFractionDigits: 6 })} TB</strong>
+                </div>
+            `;
+
+            // Format binary
+            binaryResults.innerHTML = `
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.4rem;">
+                    <span style="color: var(--text-muted);">Kibibytes (KiB):</span>
+                    <strong>${(bytes / 1024).toLocaleString(undefined, { maximumFractionDigits: 4 })} KiB</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.4rem;">
+                    <span style="color: var(--text-muted);">Mebibytes (MiB):</span>
+                    <strong>${(bytes / (1024**2)).toLocaleString(undefined, { maximumFractionDigits: 4 })} MiB</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.4rem;">
+                    <span style="color: var(--text-muted);">Gibibytes (GiB):</span>
+                    <strong>${(bytes / (1024**3)).toLocaleString(undefined, { maximumFractionDigits: 4 })} GiB</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--text-muted);">Tebibytes (TiB):</span>
+                    <strong>${(bytes / (1024**4)).toLocaleString(undefined, { maximumFractionDigits: 6 })} TiB</strong>
+                </div>
+            `;
+        }
+
+        sizeInput.addEventListener('input', recalculate);
+        unitSelect.addEventListener('change', recalculate);
+        recalculate();
+    </script>
+</body>
+</html>

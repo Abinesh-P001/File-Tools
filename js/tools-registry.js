@@ -29,9 +29,9 @@ export const TOOLS_REGISTRY = [
     {
         id: 'word-to-pdf',
         name: 'Word to PDF',
-        category: 'documents',
+        category: 'pdf',
         route: 'tools/word-to-pdf.html',
-        desc: 'Convert DOCX documents into clean, paginated PDF files directly in your browser.',
+        desc: 'Convert DOCX documents into clean, paginated PDF files preserving headings, formatting, and tables.',
         badge: 'Mammoth + PDF-Lib',
         inputFormats: ['docx'],
         outputFormats: ['pdf'],
@@ -82,6 +82,39 @@ export const TOOLS_REGISTRY = [
         available: true
     },
     {
+        id: 'reorder-pdf',
+        name: 'Reorder PDF Pages',
+        category: 'pdf',
+        route: 'tools/pdf-reorder.html',
+        desc: 'Visually rearrange the page order of your PDF document with live thumbnail controls.',
+        badge: 'Visual Arranger',
+        inputFormats: ['pdf'],
+        outputFormats: ['pdf'],
+        available: true
+    },
+    {
+        id: 'compress-pdf',
+        name: 'Compress PDF',
+        category: 'pdf',
+        route: 'tools/pdf-compress.html',
+        desc: 'Optimize internal streams and object cross-reference tables to reduce PDF size.',
+        badge: 'Stream Optimizer',
+        inputFormats: ['pdf'],
+        outputFormats: ['pdf'],
+        available: true
+    },
+    {
+        id: 'pdf-viewer',
+        name: 'PDF Document Viewer',
+        category: 'pdf',
+        route: 'tools/pdf-viewer.html',
+        desc: 'Read and inspect PDF documents directly in browser with zoom and page navigation.',
+        badge: 'PDF.js Reader',
+        inputFormats: ['pdf'],
+        outputFormats: ['view'],
+        available: true
+    },
+    {
         id: 'pdf-to-images',
         name: 'PDF to JPG / PNG',
         category: 'pdf',
@@ -127,8 +160,41 @@ export const TOOLS_REGISTRY = [
         outputFormats: ['html'],
         available: true
     },
+    {
+        id: 'txt-to-word',
+        name: 'TXT to Word (DOCX)',
+        category: 'documents',
+        route: 'tools/txt-to-word.html',
+        desc: 'Convert plain text notes or logs into genuine Microsoft Word (.docx) documents.',
+        badge: 'OpenXML Writer',
+        inputFormats: ['txt', 'log', 'md'],
+        outputFormats: ['docx'],
+        available: true
+    },
+    {
+        id: 'word-viewer',
+        name: 'Word Document Viewer',
+        category: 'documents',
+        route: 'tools/word-viewer.html',
+        desc: 'View and print Word (.docx) documents directly in your browser without MS Word installed.',
+        badge: 'DOCX Reader',
+        inputFormats: ['docx'],
+        outputFormats: ['view'],
+        available: true
+    },
 
     // Image Tools
+    {
+        id: 'image-converter',
+        name: 'Universal Image Converter',
+        category: 'images',
+        route: 'tools/image-converter.html',
+        desc: 'Seamlessly convert between JPG, PNG, and next-gen WebP formats with quality controls.',
+        badge: 'JPG • PNG • WEBP',
+        inputFormats: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
+        outputFormats: ['webp', 'png', 'jpg'],
+        available: true
+    },
     {
         id: 'jpg-to-png',
         name: 'JPG to PNG',
@@ -184,6 +250,17 @@ export const TOOLS_REGISTRY = [
         outputFormats: ['jpg', 'png'],
         available: true
     },
+    {
+        id: 'rotate-image',
+        name: 'Rotate & Flip Image',
+        category: 'images',
+        route: 'tools/image-rotate.html',
+        desc: 'Rotate images 90°, 180°, 270° or flip horizontally and vertically with live preview.',
+        badge: 'Canvas Transform',
+        inputFormats: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
+        outputFormats: ['jpg', 'png', 'webp'],
+        available: true
+    },
 
     // Spreadsheet Tools
     {
@@ -232,6 +309,17 @@ export const TOOLS_REGISTRY = [
         outputFormats: ['html'],
         available: true
     },
+    {
+        id: 'text-counter',
+        name: 'Word & Text Counter',
+        category: 'text',
+        route: 'tools/text-counter.html',
+        desc: 'Analyze words, characters, sentences, paragraphs, reading and speaking duration in real-time.',
+        badge: 'Live Metrics',
+        inputFormats: ['txt', 'text'],
+        outputFormats: ['stats'],
+        available: true
+    },
 
     // General Utilities
     {
@@ -243,6 +331,17 @@ export const TOOLS_REGISTRY = [
         badge: 'Inspector',
         inputFormats: ['*'],
         outputFormats: ['json'],
+        available: true
+    },
+    {
+        id: 'file-size-converter',
+        name: 'File Size Converter',
+        category: 'utilities',
+        route: 'tools/file-size-converter.html',
+        desc: 'Convert storage units across Bytes, KB, MB, GB, TB, KiB, MiB, and GiB instantly.',
+        badge: 'Decimal & IEC',
+        inputFormats: ['num'],
+        outputFormats: ['calc'],
         available: true
     },
     {

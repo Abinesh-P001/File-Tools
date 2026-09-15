@@ -130,86 +130,173 @@ export async function pdfToWord(pdfFile, onProgress = () => {}) {
 }
 
 /**
- * Word (DOCX) to PDF Conversion
- * Reads DOCX contents using Mammoth and formats into an A4 PDF using PDF-Lib.
+ * Genuine Word (DOCX) to PDF Conversion
+ * Reads DOCX contents using Mammoth to preserve headings, formatting, tables & images,
+ * and converts to a multi-page PDF via html2pdf or structured PDF-Lib fallback.
+ * Validates the output PDF with PDF-Lib before returning.
  * @param {File} docxFile
- * @returns {Promise<{ blob: Blob, filename: string, pageCount: number }>}
+ * @param {function} [onProgress]
+ * @returns {Promise<{ blob: Blob, filename: string, pageCount: number, html: string }>}
  */
-export async function wordToPdf(docxFile) {
+export async function wordToPdf(docxFile, onProgress = () => {}) {
+    if (!docxFile) throw new Error('No Word document provided.');
     const mammoth = ensureMammoth();
-    const { PDFDocument, StandardFonts, rgb } = ensurePdfLib();
+    const pdfLib = ensurePdfLib();
 
+    onProgress(10, 'Reading DOCX document in browser memory...');
     const buffer = await readFileAsArrayBuffer(docxFile);
-    const result = await mammoth.extractRawText({ arrayBuffer: buffer });
-    const text = result.value || '';
 
-    const pdfDoc = await PDFDocument.create();
-    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const fontSize = 11;
-    const lineHeight = 16;
-    const margin = 50;
-    const pageWidth = 595.28;
-    const pageHeight = 841.89;
-    const maxLineWidth = pageWidth - (margin * 2);
+    onProgress(30, 'Extracting rich structure, headings & formatting...');
+    const convertResult = await mammoth.convertToHtml({ arrayBuffer: buffer });
+    const extractedHtml = convertResult.value || '';
+    const messages = convertResult.messages || [];
+    if (messages.length > 0) {
+        console.info('Mammoth conversion notes:', messages);
+    }
 
-    const lines = text.split(/\r\n|\r|\n/);
-    const wrappedLines = [];
-
-    lines.forEach(rawLine => {
-        if (!rawLine.trim()) {
-            wrappedLines.push('');
-            return;
-        }
-
-        const words = rawLine.split(' ');
-        let currentLine = '';
-
-        words.forEach(word => {
-            const testLine = currentLine ? `${currentLine} ${word}` : word;
-            const testWidth = font.widthOfTextAtSize(testLine, fontSize);
-            if (testWidth > maxLineWidth) {
-                wrappedLines.push(currentLine);
-                currentLine = word;
-            } else {
-                currentLine = testLine;
-            }
-        });
-        if (currentLine) {
-            wrappedLines.push(currentLine);
-        }
-    });
-
-    let currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
-    let currentY = pageHeight - margin;
+    const base = getBaseFilename(docxFile.name);
+    let pdfBlob = null;
     let pageCount = 1;
 
-    wrappedLines.forEach(line => {
-        if (currentY < margin + lineHeight) {
-            currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
-            currentY = pageHeight - margin;
-            pageCount++;
-        }
+    // Check if html2pdf is available
+    if (typeof window.html2pdf !== 'undefined') {
+        onProgress(50, 'Rendering document layout & vector pages...');
 
-        if (line) {
-            currentPage.drawText(line, {
-                x: margin,
-                y: currentY,
-                size: fontSize,
-                font: font,
-                color: rgb(0.15, 0.15, 0.2)
+        // Create an offscreen styled container
+        const container = document.createElement('div');
+        container.style.position = 'absolute';
+        container.style.left = '-9999px';
+        container.style.top = '0';
+        container.style.width = '794px'; // ~A4 width at 96 DPI
+        container.style.padding = '32px 40px';
+        container.style.background = '#FFFFFF';
+        container.style.color = '#111827';
+        container.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+        container.style.fontSize = '12pt';
+        container.style.lineHeight = '1.6';
+
+        // Add standard typography & table styling
+        container.innerHTML = `
+            <style>
+                .doc-content h1 { font-size: 20pt; font-weight: 700; margin: 18px 0 10px; color: #0f172a; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 6px; }
+                .doc-content h2 { font-size: 16pt; font-weight: 700; margin: 16px 0 8px; color: #1e293b; }
+                .doc-content h3 { font-size: 13pt; font-weight: 600; margin: 14px 0 6px; color: #334155; }
+                .doc-content p { margin: 0 0 10px; }
+                .doc-content ul, .doc-content ol { margin: 0 0 12px 24px; padding: 0; }
+                .doc-content li { margin-bottom: 4px; }
+                .doc-content strong, .doc-content b { font-weight: 700; }
+                .doc-content em, .doc-content i { font-style: italic; }
+                .doc-content table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 11pt; }
+                .doc-content th, .doc-content td { border: 1px solid #cbd5e1; padding: 8px 10px; text-align: left; }
+                .doc-content th { background-color: #f1f5f9; font-weight: 600; }
+                .doc-content img { max-width: 100%; height: auto; display: block; margin: 12px auto; }
+                .doc-content blockquote { border-left: 3px solid #6366f1; margin: 10px 0; padding-left: 14px; color: #475569; }
+            </style>
+            <div class="doc-content">
+                ${extractedHtml || '<p><em>(Empty Document)</em></p>'}
+            </div>
+        `;
+        document.body.appendChild(container);
+
+        try {
+            const opt = {
+                margin: [12, 12, 12, 12],
+                filename: `${base}.pdf`,
+                image: { type: 'jpeg', quality: 0.96 },
+                html2canvas: { scale: 2, useCORS: true, logging: false },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            onProgress(75, 'Generating PDF pages & formatting...');
+            pdfBlob = await window.html2pdf().from(container).set(opt).outputPdf('blob');
+        } catch (renderErr) {
+            console.warn('html2pdf render fallback triggered:', renderErr);
+        } finally {
+            if (container.parentNode) {
+                container.parentNode.removeChild(container);
+            }
+        }
+    }
+
+    // Fallback using PDF-Lib structured pagination if html2pdf was unavailable or produced null
+    if (!pdfBlob) {
+        onProgress(60, 'Formatting document pages via PDF-Lib engine...');
+        const { PDFDocument, StandardFonts, rgb } = pdfLib;
+        const textResult = await mammoth.extractRawText({ arrayBuffer: buffer });
+        const text = textResult.value || '';
+
+        const pdfDoc = await PDFDocument.create();
+        const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+        const fontSize = 11;
+        const lineHeight = 16;
+        const margin = 50;
+        const pageWidth = 595.28;
+        const pageHeight = 841.89;
+        const maxLineWidth = pageWidth - (margin * 2);
+
+        const lines = text.split(/\r\n|\r|\n/);
+        const wrappedLines = [];
+
+        lines.forEach(rawLine => {
+            if (!rawLine.trim()) {
+                wrappedLines.push('');
+                return;
+            }
+            const words = rawLine.split(' ');
+            let currentLine = '';
+            words.forEach(word => {
+                const testLine = currentLine ? `${currentLine} ${word}` : word;
+                const testWidth = font.widthOfTextAtSize(testLine, fontSize);
+                if (testWidth > maxLineWidth) {
+                    wrappedLines.push(currentLine);
+                    currentLine = word;
+                } else {
+                    currentLine = testLine;
+                }
             });
-        }
-        currentY -= lineHeight;
-    });
+            if (currentLine) wrappedLines.push(currentLine);
+        });
 
-    const pdfBytes = await pdfDoc.save();
-    const pdfBlob = new Blob([pdfBytes], { type: 'application/pdf' });
-    const base = getBaseFilename(docxFile.name);
+        let currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
+        let currentY = pageHeight - margin;
+
+        wrappedLines.forEach(line => {
+            if (currentY < margin + lineHeight) {
+                currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
+                currentY = pageHeight - margin;
+            }
+            if (line) {
+                currentPage.drawText(line, {
+                    x: margin,
+                    y: currentY,
+                    size: fontSize,
+                    font: font,
+                    color: rgb(0.12, 0.12, 0.15)
+                });
+            }
+            currentY -= lineHeight;
+        });
+
+        const pdfBytes = await pdfDoc.save();
+        pdfBlob = new Blob([pdfBytes], { type: 'application/pdf' });
+    }
+
+    onProgress(90, 'Verifying generated PDF integrity...');
+
+    // Strict validation: Re-parse generated PDF to verify it is non-empty and structurally valid
+    const verifyDoc = await pdfLib.PDFDocument.load(await pdfBlob.arrayBuffer(), { ignoreEncryption: true });
+    pageCount = verifyDoc.getPageCount();
+    if (pageCount < 1) {
+        throw new Error('Generated PDF validation failed: output contains 0 pages.');
+    }
+
+    onProgress(100, 'Conversion complete & verified!');
 
     return {
         blob: pdfBlob,
         filename: `${base}.pdf`,
-        pageCount
+        pageCount,
+        html: extractedHtml
     };
 }
 
@@ -267,5 +354,39 @@ ${html}
         blob,
         html,
         filename: `${base}.html`
+    };
+}
+
+/**
+ * Plain Text (TXT) to Word (.docx) Conversion
+ * Builds an authentic OpenXML Word document using docx.umd.js
+ * @param {string} text
+ * @param {string} [filename='document']
+ * @returns {Promise<{ blob: Blob, filename: string, size: number, paragraphCount: number }>}
+ */
+export async function txtToWord(text, filename = 'document') {
+    const docxLib = ensureDocx();
+    const { Document, Paragraph, TextRun, Packer } = docxLib;
+
+    const lines = (text || '').split(/\r\n|\r|\n/);
+    const paragraphs = lines.map(line => new Paragraph({
+        children: [new TextRun({ text: line, size: 22, font: 'Calibri' })],
+        spacing: { after: 120 }
+    }));
+
+    const doc = new Document({
+        sections: [{
+            properties: {},
+            children: paragraphs.length > 0 ? paragraphs : [new Paragraph({ children: [new TextRun('')] })]
+        }]
+    });
+
+    const blob = await Packer.toBlob(doc);
+    const base = getBaseFilename(filename);
+    return {
+        blob,
+        filename: `${base}.docx`,
+        size: blob.size,
+        paragraphCount: paragraphs.length
     };
 }

@@ -68,7 +68,7 @@ function initToolSearchAndFilter() {
 }
 
 /**
- * Mobile hamburger navigation toggle
+ * Mobile hamburger navigation toggle with auto-close
  */
 function initMobileNav() {
     const toggleBtn = document.getElementById('mobileNavToggle');
@@ -79,6 +79,22 @@ function initMobileNav() {
             const expanded = toggleBtn.getAttribute('aria-expanded') === 'true';
             toggleBtn.setAttribute('aria-expanded', !expanded);
             navMenu.classList.toggle('is-open');
+        });
+
+        // Auto close when any link inside nav is clicked
+        navMenu.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('is-open');
+                toggleBtn.setAttribute('aria-expanded', 'false');
+            });
+        });
+
+        // Auto close when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!navMenu.contains(e.target) && !toggleBtn.contains(e.target) && navMenu.classList.contains('is-open')) {
+                navMenu.classList.remove('is-open');
+                toggleBtn.setAttribute('aria-expanded', 'false');
+            }
         });
     }
 }
