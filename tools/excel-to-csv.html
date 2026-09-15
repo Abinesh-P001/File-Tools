@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel (XLSX/XLS) to CSV Converter — 100% Client-Side | FILETOOLS</title>
+    <meta name="description" content="Convert Excel spreadsheets (.xlsx, .xls) to CSV format directly in your browser using SheetJS. Zero server uploads.">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/tool.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <!-- Local SheetJS -->
+    <script src="../libraries/xlsx.full.min.js"></script>
+    <style>
+        .csv-preview-table-wrapper {
+            width: 100%;
+            max-height: 280px;
+            overflow: auto;
+            background: var(--surface-input);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 1.5rem;
+        }
+
+        .csv-preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            color: #fff;
+        }
+
+        .csv-preview-table th, .csv-preview-table td {
+            border: 1px solid var(--border-subtle);
+            padding: 0.5rem 0.75rem;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .csv-preview-table th {
+            background: rgba(255, 255, 255, 0.05);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="container nav-container">
+            <a href="../index.html" class="brand-logo">
+                <div class="brand-logo-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                </div>
+                <span>FILETOOLS</span>
+            </a>
+            <div class="client-badge-pill">
+                <span class="pulse-dot"></span>
+                <span>100% In-Browser</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="tool-layout">
+        <div class="container">
+            <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+                <a href="../index.html">Home</a>
+                <span class="breadcrumb-sep">/</span>
+                <a href="../index.html#tools">Spreadsheet Tools</a>
+                <span class="breadcrumb-sep">/</span>
+                <span>Excel to CSV</span>
+            </nav>
+
+            <div class="tool-header">
+                <div class="tool-header-badge">SheetJS Engine</div>
+                <h1 class="tool-header-title">Excel (XLSX / XLS) to CSV</h1>
+                <p class="tool-header-desc">
+                    Extract spreadsheets into standardized Comma-Separated Values (CSV) in browser memory.
+                </p>
+            </div>
+
+            <div class="tool-workspace">
+                <div id="errorAlert" class="alert-error" style="display: none;" role="alert"></div>
+
+                <div id="dropzone" class="upload-dropzone">
+                    <div class="dropzone-icon-circle">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="3" y1="9" x2="21" y2="9"></line>
+                            <line x1="3" y1="15" x2="21" y2="15"></line>
+                            <line x1="9" y1="3" x2="9" y2="21"></line>
+                            <line x1="15" y1="3" x2="15" y2="21"></line>
+                        </svg>
+                    </div>
+                    <div class="dropzone-title">Drop your Excel spreadsheet here</div>
+                    <div class="dropzone-subtitle">Supported: .xlsx, .xls, .csv</div>
+                    <button type="button" class="btn-primary" id="selectFileBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span>SELECT EXCEL FILE</span>
+                    </button>
+                    <div class="dropzone-limits">Supported: .xlsx, .xls • Max 40 MB</div>
+                    <input type="file" id="fileInput" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" style="display: none;">
+                </div>
+
+                <div id="fileInfoCard" style="display: none;"></div>
+
+                <div id="actionSection" style="display: none;">
+                    <div class="options-panel">
+                        <div class="options-heading">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            </svg>
+                            <span>Sheet Selection</span>
+                        </div>
+
+                        <div class="option-group">
+                            <div class="option-label"><span>Select Sheet to Export</span></div>
+                            <select id="sheetSelector" class="select-input"></select>
+                        </div>
+                    </div>
+
+                    <div class="action-controls">
+                        <button type="button" id="processBtn" class="btn-primary">
+                            <span>CONVERT TO CSV</span>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="progressSection" class="progress-section" style="display: none;">
+                    <div class="progress-bar-container">
+                        <div id="progressBar" class="progress-bar-fill" style="width: 100%;"></div>
+                    </div>
+                    <div id="progressText" class="progress-text">Exporting CSV streams...</div>
+                </div>
+
+                <div id="resultSection" class="result-section" style="display: none;">
+                    <div class="result-success-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        <span>CSV Export Complete!</span>
+                    </div>
+
+                    <div class="result-stats"></div>
+                    <div id="csvTableContainer" class="csv-preview-table-wrapper"></div>
+
+                    <div class="result-actions">
+                        <button type="button" id="downloadBtn" class="btn-primary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            <span>DOWNLOAD .CSV FILE</span>
+                        </button>
+                        <button type="button" id="resetBtn" class="btn-secondary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="1 4 1 10 7 10"></polyline>
+                                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                            </svg>
+                            <span>Convert Another File</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-bottom">
+            <div>&copy; 2026 FILETOOLS. 100% Frontend-Only Architecture.</div>
+            <div><a href="../index.html">Back to All Utilities</a></div>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { ToolUI } from '../js/ui.js';
+        import { excelToCsv } from '../js/spreadsheet-tools.js';
+        import { triggerDownload } from '../js/download.js';
+        import { formatBytes, readFileAsArrayBuffer } from '../js/file-utils.js';
+
+        const ui = new ToolUI({
+            dropzone: document.getElementById('dropzone'),
+            fileInput: document.getElementById('fileInput'),
+            fileInfoCard: document.getElementById('fileInfoCard'),
+            actionSection: document.getElementById('actionSection'),
+            processBtn: document.getElementById('processBtn'),
+            progressSection: document.getElementById('progressSection'),
+            progressBar: document.getElementById('progressBar'),
+            progressText: document.getElementById('progressText'),
+            resultSection: document.getElementById('resultSection'),
+            downloadBtn: document.getElementById('downloadBtn'),
+            resetBtn: document.getElementById('resetBtn'),
+            errorAlert: document.getElementById('errorAlert')
+        });
+
+        document.getElementById('selectFileBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('fileInput').click();
+        });
+
+        const sheetSelector = document.getElementById('sheetSelector');
+        const csvTableContainer = document.getElementById('csvTableContainer');
+        let selectedFile = null;
+
+        ui.onFilesSelected = async (files) => {
+            const file = files[0];
+            const ext = file.name.split('.').pop()?.toLowerCase();
+            if (ext !== 'xlsx' && ext !== 'xls') {
+                ui.showError('Please upload a valid Excel spreadsheet (.xlsx or .xls).');
+                return;
+            }
+            selectedFile = file;
+            ui.showFileInfo(file);
+
+            try {
+                const buffer = await readFileAsArrayBuffer(file);
+                const workbook = XLSX.read(buffer, { type: 'array' });
+                sheetSelector.innerHTML = '';
+                workbook.SheetNames.forEach((sheet, idx) => {
+                    const opt = document.createElement('option');
+                    opt.value = idx;
+                    opt.textContent = sheet;
+                    sheetSelector.appendChild(opt);
+                });
+            } catch (err) {
+                ui.showError('Could not inspect Excel workbook: ' + err.message);
+            }
+        };
+
+        document.getElementById('processBtn').addEventListener('click', async () => {
+            if (!selectedFile) return;
+            const sheetIdx = parseInt(sheetSelector.value, 10) || 0;
+
+            try {
+                ui.setProcessing(true);
+                const result = await excelToCsv(selectedFile, sheetIdx);
+
+                // Build preview table from first 6 lines
+                const lines = result.csvText.split('\n').filter(Boolean).slice(0, 8);
+                let tableHtml = '<table class="csv-preview-table">';
+                lines.forEach((line, rIdx) => {
+                    const cells = line.split(',');
+                    const tag = rIdx === 0 ? 'th' : 'td';
+                    tableHtml += '<tr>' + cells.map(c => `<${tag}>${c.replace(/"/g, '')}</${tag}>`).join('') + '</tr>';
+                });
+                tableHtml += '</table>';
+                csvTableContainer.innerHTML = tableHtml;
+
+                const stats = ui.el.resultSection.querySelector('.result-stats');
+                if (stats) {
+                    stats.innerHTML = `
+                        <div class="stat-pill">Rows: <strong>${result.rowCount} rows</strong></div>
+                        <div class="stat-arrow">→</div>
+                        <div class="stat-pill stat-result">CSV Size: <strong>${formatBytes(result.blob.size)}</strong></div>
+                    `;
+                }
+
+                ui.showResult({
+                    blob: result.blob,
+                    filename: result.filename
+                });
+            } catch (err) {
+                ui.showError('Conversion to CSV failed: ' + err.message);
+            }
+        });
+
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            if (ui.resultBlob && ui.resultFilename) {
+                triggerDownload(ui.resultBlob, ui.resultFilename);
+            }
+        });
+
+        ui.onReset = () => {
+            selectedFile = null;
+            sheetSelector.innerHTML = '';
+            csvTableContainer.innerHTML = '';
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Page Rotator — 100% Client-Side | FILETOOLS</title>
+    <meta name="description" content="Rotate PDF pages 90, 180, or 270 degrees directly in your browser using PDF-Lib. Fast, private, zero server uploads.">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/tool.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <script src="../libraries/pdf-lib.min.js"></script>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="container nav-container">
+            <a href="../index.html" class="brand-logo">
+                <div class="brand-logo-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                </div>
+                <span>FILETOOLS</span>
+            </a>
+            <div class="client-badge-pill">
+                <span class="pulse-dot"></span>
+                <span>100% In-Browser</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="tool-layout">
+        <div class="container">
+            <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+                <a href="../index.html">Home</a>
+                <span class="breadcrumb-sep">/</span>
+                <a href="../index.html#tools">PDF Tools</a>
+                <span class="breadcrumb-sep">/</span>
+                <span>PDF Rotate</span>
+            </nav>
+
+            <div class="tool-header">
+                <div class="tool-header-badge">Orientation Modifier</div>
+                <h1 class="tool-header-title">PDF Rotate</h1>
+                <p class="tool-header-desc">
+                    Fix sideways or upside-down PDF documents. Rotate all or selected pages clockwise in browser memory.
+                </p>
+            </div>
+
+            <div class="tool-workspace">
+                <div id="errorAlert" class="alert-error" style="display: none;" role="alert"></div>
+
+                <div id="dropzone" class="upload-dropzone">
+                    <div class="dropzone-icon-circle">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21.5 2v6h-6"></path>
+                            <path d="M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+                        </svg>
+                    </div>
+                    <div class="dropzone-title">Drop your PDF file here to rotate</div>
+                    <div class="dropzone-subtitle">or click to browse from your device</div>
+                    <button type="button" class="btn-primary" id="selectFileBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span>SELECT PDF</span>
+                    </button>
+                    <div class="dropzone-limits">Supported: .pdf • Max 60 MB</div>
+                    <input type="file" id="fileInput" accept="application/pdf,.pdf" style="display: none;">
+                </div>
+
+                <div id="fileInfoCard" style="display: none;"></div>
+
+                <div id="actionSection" style="display: none;">
+                    <div class="options-panel">
+                        <div class="options-heading">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <span>Rotation Angle</span>
+                        </div>
+
+                        <div class="radio-tiles">
+                            <div class="radio-tile">
+                                <input type="radio" name="rotDegrees" id="rot90" value="90" checked>
+                                <label for="rot90">
+                                    <span style="font-size: 1.1rem; margin-bottom: 2px;">90°</span>
+                                    <span style="font-size: 0.75rem;">Clockwise</span>
+                                </label>
+                            </div>
+                            <div class="radio-tile">
+                                <input type="radio" name="rotDegrees" id="rot180" value="180">
+                                <label for="rot180">
+                                    <span style="font-size: 1.1rem; margin-bottom: 2px;">180°</span>
+                                    <span style="font-size: 0.75rem;">Half Turn</span>
+                                </label>
+                            </div>
+                            <div class="radio-tile">
+                                <input type="radio" name="rotDegrees" id="rot270" value="270">
+                                <label for="rot270">
+                                    <span style="font-size: 1.1rem; margin-bottom: 2px;">270°</span>
+                                    <span style="font-size: 0.75rem;">Counter-CW</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="option-group" style="margin-top: 1.5rem;">
+                            <div class="option-label">
+                                <span>Apply Rotation To:</span>
+                            </div>
+                            <div class="radio-tiles">
+                                <div class="radio-tile">
+                                    <input type="radio" name="pageScope" id="scopeAll" value="all" checked>
+                                    <label for="scopeAll">All Pages</label>
+                                </div>
+                                <div class="radio-tile">
+                                    <input type="radio" name="pageScope" id="scopeOdd" value="odd">
+                                    <label for="scopeOdd">Odd Pages Only</label>
+                                </div>
+                                <div class="radio-tile">
+                                    <input type="radio" name="pageScope" id="scopeEven" value="even">
+                                    <label for="scopeEven">Even Pages Only</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-controls">
+                        <button type="button" id="processBtn" class="btn-primary">
+                            <span>ROTATE PDF</span>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="progressSection" class="progress-section" style="display: none;">
+                    <div class="progress-bar-container">
+                        <div id="progressBar" class="progress-bar-fill" style="width: 100%;"></div>
+                    </div>
+                    <div id="progressText" class="progress-text">Rotating PDF pages in browser...</div>
+                </div>
+
+                <div id="resultSection" class="result-section" style="display: none;">
+                    <div class="result-success-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        <span>Rotation Complete!</span>
+                    </div>
+
+                    <div class="result-stats"></div>
+
+                    <div class="result-actions">
+                        <button type="button" id="downloadBtn" class="btn-primary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            <span>DOWNLOAD ROTATED PDF</span>
+                        </button>
+                        <button type="button" id="resetBtn" class="btn-secondary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="1 4 1 10 7 10"></polyline>
+                                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                            </svg>
+                            <span>Rotate Another File</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-bottom">
+            <div>&copy; 2026 FILETOOLS. 100% Frontend-Only Architecture.</div>
+            <div><a href="../index.html">Back to All Utilities</a></div>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { ToolUI } from '../js/ui.js';
+        import { validateFile, VALIDATION_RULES } from '../js/validation.js';
+        import { rotatePdf } from '../js/pdf-tools.js';
+        import { triggerDownload } from '../js/download.js';
+        import { formatBytes } from '../js/file-utils.js';
+
+        const ui = new ToolUI({
+            dropzone: document.getElementById('dropzone'),
+            fileInput: document.getElementById('fileInput'),
+            fileInfoCard: document.getElementById('fileInfoCard'),
+            actionSection: document.getElementById('actionSection'),
+            processBtn: document.getElementById('processBtn'),
+            progressSection: document.getElementById('progressSection'),
+            progressBar: document.getElementById('progressBar'),
+            progressText: document.getElementById('progressText'),
+            resultSection: document.getElementById('resultSection'),
+            downloadBtn: document.getElementById('downloadBtn'),
+            resetBtn: document.getElementById('resetBtn'),
+            errorAlert: document.getElementById('errorAlert')
+        });
+
+        document.getElementById('selectFileBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('fileInput').click();
+        });
+
+        let selectedFile = null;
+
+        ui.onFilesSelected = (files) => {
+            const file = files[0];
+            const validation = validateFile(file, VALIDATION_RULES.PDF);
+            if (!validation.valid) {
+                ui.showError(validation.error);
+                return;
+            }
+            selectedFile = file;
+            ui.showFileInfo(file);
+        };
+
+        document.getElementById('processBtn').addEventListener('click', async () => {
+            if (!selectedFile) return;
+            const degrees = parseInt(document.querySelector('input[name="rotDegrees"]:checked')?.value || '90', 10);
+            const scope = document.querySelector('input[name="pageScope"]:checked')?.value || 'all';
+
+            try {
+                ui.setProcessing(true);
+                const result = await rotatePdf(selectedFile, degrees, scope);
+
+                const stats = ui.el.resultSection.querySelector('.result-stats');
+                if (stats) {
+                    stats.innerHTML = `
+                        <div class="stat-pill">Rotated: <strong>${degrees}°</strong> (${scope} pages)</div>
+                        <div class="stat-arrow">→</div>
+                        <div class="stat-pill stat-result">Output Size: <strong>${formatBytes(result.blob.size)}</strong></div>
+                    `;
+                }
+
+                ui.showResult({
+                    blob: result.blob,
+                    filename: result.filename
+                });
+            } catch (err) {
+                ui.showError('Rotation failed: ' + err.message);
+            }
+        });
+
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            if (ui.resultBlob && ui.resultFilename) {
+                triggerDownload(ui.resultBlob, ui.resultFilename);
+            }
+        });
+
+        ui.onReset = () => {
+            selectedFile = null;
+        };
+    </script>
+</body>
+</html>

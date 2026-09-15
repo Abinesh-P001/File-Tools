@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FILETOOLS — Free Online File Utilities | 100% Client-Side</title>
+    <meta name="description" content="Convert, compress, resize images, manipulate PDFs, and process documents directly inside your browser. No server uploads, no accounts, 100% private.">
+    <meta name="keywords" content="file converter, client-side, pdf to word, word to pdf, jpg to png, png to jpg, compress image, resize image, pdf merge, excel to csv, privacy file tool">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+    <!-- Navigation Header -->
+    <header class="site-header">
+        <div class="container nav-container">
+            <a href="index.html" class="brand-logo">
+                <div class="brand-logo-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <path d="M12 18v-6"></path>
+                        <path d="M9 15l3-3 3 3"></path>
+                    </svg>
+                </div>
+                <span>FILETOOLS</span>
+            </a>
+
+            <nav class="main-nav" id="mainNavMenu">
+                <a href="#tools" class="nav-link">All Tools</a>
+                <a href="#privacy" class="nav-link">Privacy First</a>
+                <a href="#how-it-works" class="nav-link">How It Works</a>
+                <div class="client-badge-pill" title="All operations run 100% inside your browser memory">
+                    <span class="pulse-dot"></span>
+                    <span>100% Local In-Browser</span>
+                </div>
+            </nav>
+
+            <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="container">
+                <div class="hero-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                    <span>Zero Server Uploads • 100% In-Browser</span>
+                </div>
+                <h1 class="hero-title">
+                    Free Online File Utilities <br>
+                    <span class="hero-title-gradient">Convert, Compress & Manage</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Convert, resize, compress, and process your files directly in your browser. No server storage, no accounts, and no tracking.
+                </p>
+
+                <!-- Fast Dropzone Primary CTA -->
+                <div class="hero-quick-drop" id="homeQuickDrop" tabindex="0" role="button" aria-label="Upload file to start">
+                    <div class="quick-drop-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </div>
+                    <div class="quick-drop-heading">Drag & Drop Any Supported File</div>
+                    <div class="quick-drop-sub">PDF, DOCX, XLSX, JPG, PNG, CSV, or TXT</div>
+                    <button type="button" class="btn-primary" onclick="document.getElementById('homeQuickInput').click();">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span>UPLOAD FILE</span>
+                    </button>
+                    <input type="file" id="homeQuickInput" style="display: none;" accept=".pdf,.docx,.xlsx,.xls,.jpg,.jpeg,.png,.webp,.csv,.txt,.md,.json">
+                </div>
+            </div>
+        </section>
+
+        <!-- Tools Explorer Section -->
+        <section class="tools-section" id="tools">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Explore File Utilities</h2>
+                    <p class="section-subtitle">Real, client-side tools that work instantaneously with no waitlist or registration.</p>
+                </div>
+
+                <!-- Search & Filters -->
+                <div class="filter-bar">
+                    <div class="search-box">
+                        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="toolSearchInput" class="search-input" placeholder="Search tool by name or extension (e.g. PDF, Word, JPG, Excel)..." aria-label="Search tools">
+                    </div>
+                    <div class="category-pills">
+                        <button class="category-pill active" data-category="all">All Tools</button>
+                        <button class="category-pill" data-category="pdf">PDF Tools</button>
+                        <button class="category-pill" data-category="documents">Word & Docs</button>
+                        <button class="category-pill" data-category="images">Image Tools</button>
+                        <button class="category-pill" data-category="spreadsheets">Spreadsheets</button>
+                        <button class="category-pill" data-category="text">Text Tools</button>
+                        <button class="category-pill" data-category="utilities">Utilities</button>
+                    </div>
+                </div>
+
+                <!-- Tools Grid -->
+                <div class="tools-grid">
+
+                    <!-- PDF to Word -->
+                    <a href="tools/pdf-to-word.html" class="tool-card" data-category="pdf" data-tags="pdf to word docx document converter extract">
+                        <div>
+                            <div class="card-top">
+                                <div class="tool-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    </svg>
+                                </div>
+                                <span class="tool-badge badge-hot">DOCX Generator</span>
+                            </div>
+                            <h3 class="tool-title">PDF to Word</h3>
+                            <p class="tool-desc">Extract text and paragraphs from PDF into an editable Microsoft Word (.docx) file.</p>
+                        </div>
+                        <div class="tool-cta">
+                            <span>Open Tool</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+
+                    <!-- Word to PDF -->
+                    <a href="tools/word-to-pdf.html" class="tool-card" data-category="documents" data-tags="word to pdf docx document converter">
+                        <div>
+                            <div class="card-top">
+                                <div class="tool-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="12" y1="18" x2="12" y2="12"></line>
+                                        <line x1="9" y1="15" x2="15" y2="15"></line>
+                                    </svg>
+                                </div>
+                                <span class="tool-badge">Mammoth Engine</span>
+                            </div>
+                            <h3 class="tool-title">Word to PDF</h3>
+                            <p class="tool-desc">Convert modern Word documents (.docx) into cleanly paginated A4 PDF files.</p>
+                        </div>
+                        <div class="tool-cta">
+                            <span>Open Tool</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+
+                    <!-- PDF Merge -->
+                    <a href="tools/pdf-merge.html" class="tool-card" data-category="pdf" data-tags="pdf merge combine join pdf-lib documents">
+                        <div>
+                            <div class="card-top">
+                                <div class="tool-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="12" y1="18" x2="12" y2="12"></line>
+                                        <line x1="9" y1="15" x2="15" y2="15"></line>
+                                    </svg>
+                                </div>
+                                <span class="tool-badge badge-hot">PDF-Lib</span>
+                            </div>
+                            <h3 class="tool-title">Merge PDF</h3>
+                            <p class="tool-desc">Combine multiple PDF documents into a single organized file with reordering.</p>
+                        </div>
+                        <div class="tool-cta">
+                            <span>Open Tool</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+
+                    <!-- PDF Split & Extract -->
+                    <a href="tools/pdf-split.html" class="tool-card" data-category="pdf" data-tags="pdf split extract pages range separate">
+                        <div>
+                            <div class="card-top">
+                                <div class="tool-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="8" y1="13" x2="16" y2="13"></line>
+                                    </svg>
+                                </div>
+                                <span class="tool-badge">Page Ranges</span>
+                            </div>
+                            <h3 class="tool-title">Split & Extract PDF</h3>
+                            <p class="tool-desc">Extract specific pages or page ranges (e.g. 1-3, 5) into a clean separate PDF.</p>
+                        </div>
+                        <div class="tool-cta">
+                            <span>Open Tool</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+
+                    <!-- PDF Rotate -->
+                    <a href="tools/pdf-rotate.html" class="tool-card" data-category="pdf" data-tags="pdf rotate orientation 90 180 clockwise">
+                        <div>
+                            <div class="card-top">
+                                <div class="tool-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21.5 2v6h-6"></path>
+                                        <path d="M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+                                    </svg>
+                                </div>
+                                <span class="tool-badge">Orientation</span>
+                            </div>
+                            <h3 class="tool-title">Rotate PDF</h3>
+                            <p class="tool-desc">Fix sideways pages by rotating 90°, 180°, or 270° clockwise with immediate preview.</p>
+                        </div>
+                        <div class="tool-cta">
+                            <span>Open Tool</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+
+                    <!-- Delete PDF Pages -->
+                    <a href="tools/delete-pdf-pages.html" class="tool-card" data-category="pdf" data-tags="pdf delete remove pages">
+                        <div>
+                            <div class="card-top">
+                                <div class="tool-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                </div>
+                                <span class="tool-badge">Page Remover</span>
+                            </div>
+                            <h3 class="tool-title">Delete PDF Pages</h3>
+                            <p class="tool-desc">Select unwanted pages by number and export an updated document with those pages removed.</p>
+                        </div>
+                        <div class="tool-cta">
+                            <span>Open Tool</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+
+                    <!-- PDF to Images -->
+                    <a href="tools/pdf-to-images.html" class="tool-card" data-category="pdf" data-tags="pdf to jpg pdf to png render pages zip">
+                        <div>
+                            <div class="card-top">
+                                <div class="tool-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <circle cx="10" cy="13" r="2"></circle>
+                                        <path d="M20 17l-1.5-1.5a2 2 0 0 0-2.8 0L10 21"></path>
+                                    </svg>
+                                </div>
+                                <span class="tool-badge badge-hot">PDF.js + ZIP</span>
+                            </div>
+                            <h3 class="tool-title">PDF to JPG / PNG</h3>
+                            <p class="tool-desc">Render PDF pages to crisp images. Download individually or as a single ZIP bundle.</p>
+                        </div>
+                        <div class="tool-cta">
+                            <span>Open Tool</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+
+                    <!-- JPG to PDF -->
+                    <a href="tools/jpg-to-pdf.html" class="tool-card" data-category="pdf" data-tags="jpg png to pdf document convert images">
+                        <div>
+                            <div class="card-top">
+                                <div class="tool-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                        <polyline points="21 15 16 10 5 21"></polyline>
+                                    </svg>
+                                </div>
+                                <span class="tool-badge">Multi-Image</span>
+                            </div>
+                            <h3 class="tool-title">JPG & PNG to PDF</h3>
+                            <p class="tool-desc">Combine multiple images into a standard A4 PDF document with margin controls.</p>
+                        </div>
+                        <div class="tool-cta">
+                            <span>Open Tool</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+
+                    <!-- Word to TXT -->
+                    <a href="tools/word-to-txt.html" class="tool-card" data-category="documents" data-tags="word to txt docx text plain text">
+                        <div>
+                            <div class="card-top">
+                                <div class="tool-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    </svg>
+                                </div>
+                                <span class="tool-badge">Plain Text</span>
+                            </div>
+                            <h3 class="tool-title">Word to TXT</h3>
+                            <p class="tool-desc">Extract raw plain text from any modern Word (.docx) document in browser memory.</p>
+                        </div>
+                        <div class="tool-cta">
+                            <span>Open Tool</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+
+                    <!-- Word to HTML -->
+                    <a href="tools/word-to-html.html" class="tool-card" data-category="documents" data-tags="word to html docx semantic markup">
+                        <div>
+                            <div class="card-top">
+                                <div class="tool-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="16 18 22 12 16 6"></polyline>
+                                        <polyline points="8 6 2 12 8 18"></polyline>
+                                    </svg>
+                                </div>
+                                <span class="tool-badge">HTML5</span>
+                            </div>
+                            <h3 class="tool-title">Word to HTML</h3>
+                            <p class="tool-desc">Convert Word documents into clean semantic HTML5 markup with live preview.</p>
+                        </div>
+                        <div class="tool-cta">
+                            <span>Open Tool</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+
+                    <!-- Excel to CSV -->
+                    <a href="tools/excel-to-csv.html" class="tool-card" data-category="spreadsheets" data-tags="excel to csv xlsx xls spreadsheet table">
+                        <div>
+                            <div class="card-top">
+                                <div class="tool-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                        <line x1="3" y1="9" x2="21" y2="9"></line>
+                                        <line x1="3" y1="15" x2="21" y2="15"></line>
+                                        <line x1="9" y1="3" x2="9" y2="21"></line>
+                                    </svg>
+                                </div>
+                                <span class="tool-badge badge-hot">SheetJS</span>
+                            </div>
+                            <h3 class="tool-title">Excel to CSV</h3>
+                            <p class="tool-desc">Convert Excel spreadsheets (.xlsx, .xls) to standard CSV with sheet selection.</p>
+                        </div>
+                        <div class="tool-cta">
+                            <span>Open Tool</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+
+                    <!-- CSV to Excel -->
+                    <a href="tools/csv-to-excel.html" class="tool-card" data-category="spreadsheets" data-tags="csv to excel xlsx spreadsheet">
+                        <div>
+                            <div class="card-top">
+                                <div class="tool-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                        <line x1="3" y1="9" x2="21" y2="9"></line>
+                                        <line x1="9" y1="3" x2="9" y2="21"></line>
+                                    </svg>
+                                </div>
+                                <span class="tool-badge">XLSX Export</span>
+                            </div>
+                            <h3 class="tool-title">CSV to Excel</h3>
+                            <p class="tool-desc">Transform comma-separated CSV text into an Excel (.xlsx) workbook directly in browser.</p>
+                        </div>
+                        <div class="tool-cta">
+                            <span>Open Tool</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+
+                    <!-- JPG to PNG -->
+                    <a href="tools/jpg-to-png.html" class="tool-card" data-category="images" data-tags="jpg jpeg png image converter">
+                        <div>
+                            <div class="card-top">
+                                <div class="tool-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                        <polyline points="21 15 16 10 5 21"></polyline>
+                                    </svg>
+                                </div>
+                                <span class="tool-badge badge-hot">Popular</span>
+                            </div>
+                            <h3 class="tool-title">JPG to PNG</h3>
+                            <p class="tool-desc">Convert JPEG images to high-fidelity lossless PNG format in browser memory.</p>
+                        </div>
+                        <div class="tool-cta">
+                            <span>Open Tool</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+
+                    <!-- PNG to JPG -->
+                    <a href="tools/png-to-jpg.html" class="tool-card" data-category="images" data-tags="png jpg jpeg quality compression">
+                        <div>
+                            <div class="card-top">
+                                <div class="tool-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                        <polyline points="21 15 16 10 5 21"></polyline>
+                                    </svg>
+                                </div>
+                                <span class="tool-badge">Quality Slider</span>
+                            </div>
+                            <h3 class="tool-title">PNG to JPG</h3>
+                            <p class="tool-desc">Convert PNG with transparency matte control and custom JPG output quality.</p>
+                        </div>
+                        <div class="tool-cta">
+                            <span>Open Tool</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+
+                    <!-- Image Compressor -->
+                    <a href="tools/image-compressor.html" class="tool-card" data-category="images" data-tags="compress shrink reduce file size image optimize">
+                        <div>
+                            <div class="card-top">
+                                <div class="tool-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="4 14 10 14 10 20"></polyline>
+                                        <polyline points="20 10 14 10 14 4"></polyline>
+                                        <line x1="14" y1="10" x2="21" y2="3"></line>
+                                        <line x1="3" y1="21" x2="10" y2="14"></line>
+                                    </svg>
+                                </div>
+                                <span class="tool-badge badge-hot">Savings %</span>
+                            </div>
+                            <h3 class="tool-title">Image Compressor</h3>
+                            <p class="tool-desc">Reduce JPG, PNG, and WebP file sizes. Live byte reduction and side-by-side preview.</p>
+                        </div>
+                        <div class="tool-cta">
+                            <span>Open Tool</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+
+                    <!-- Image Resizer -->
+                    <a href="tools/image-resizer.html" class="tool-card" data-category="images" data-tags="resize dimensions width height aspect ratio scale">
+                        <div>
+                            <div class="card-top">
+                                <div class="tool-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M15 3h6v6"></path>
+                                        <path d="M9 21H3v-6"></path>
+                                        <path d="M21 3l-7 7"></path>
+                                        <path d="M3 21l7-7"></path>
+                                    </svg>
+                                </div>
+                                <span class="tool-badge">Aspect Lock</span>
+                            </div>
+                            <h3 class="tool-title">Image Resizer</h3>
+                            <p class="tool-desc">Change image width & height with aspect ratio preservation and crisp interpolation.</p>
+                        </div>
+                        <div class="tool-cta">
+                            <span>Open Tool</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+
+                    <!-- Image Cropper -->
+                    <a href="tools/image-cropper.html" class="tool-card" data-category="images" data-tags="crop cut aspect square 16:9 avatar photo">
+                        <div>
+                            <div class="card-top">
+                                <div class="tool-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M6 2v14a2 2 0 0 0 2 2h14"></path>
+                                        <path d="M18 22V8a2 2 0 0 0-2-2H2"></path>
+                                    </svg>
+                                </div>
+                                <span class="tool-badge">Visual Crop</span>
+                            </div>
+                            <h3 class="tool-title">Image Cropper</h3>
+                            <p class="tool-desc">Select exact crop area with preset ratios (1:1, 4:3, 16:9, Free) and export immediately.</p>
+                        </div>
+                        <div class="tool-cta">
+                            <span>Open Tool</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+
+                    <!-- TXT to PDF -->
+                    <a href="tools/txt-to-pdf.html" class="tool-card" data-category="text" data-tags="txt text md markdown to pdf document format">
+                        <div>
+                            <div class="card-top">
+                                <div class="tool-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    </svg>
+                                </div>
+                                <span class="tool-badge">A4 Pagination</span>
+                            </div>
+                            <h3 class="tool-title">TXT to PDF</h3>
+                            <p class="tool-desc">Convert plain text or Markdown files into cleanly paginated A4 PDF documents.</p>
+                        </div>
+                        <div class="tool-cta">
+                            <span>Open Tool</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+
+                    <!-- Markdown to HTML -->
+                    <a href="tools/markdown-to-html.html" class="tool-card" data-category="text" data-tags="markdown md to html preview">
+                        <div>
+                            <div class="card-top">
+                                <div class="tool-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="16 18 22 12 16 6"></polyline>
+                                        <polyline points="8 6 2 12 8 18"></polyline>
+                                    </svg>
+                                </div>
+                                <span class="tool-badge">Live Preview</span>
+                            </div>
+                            <h3 class="tool-title">Markdown to HTML</h3>
+                            <p class="tool-desc">Convert Markdown into clean semantic HTML with instant live rendered preview.</p>
+                        </div>
+                        <div class="tool-cta">
+                            <span>Open Tool</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+
+                    <!-- JSON Formatter & Validator -->
+                    <a href="tools/json-tools.html" class="tool-card" data-category="utilities" data-tags="json formatter prettify validator minify">
+                        <div>
+                            <div class="card-top">
+                                <div class="tool-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="16 18 22 12 16 6"></polyline>
+                                        <polyline points="8 6 2 12 8 18"></polyline>
+                                    </svg>
+                                </div>
+                                <span class="tool-badge">Formatter</span>
+                            </div>
+                            <h3 class="tool-title">JSON Formatter & Validator</h3>
+                            <p class="tool-desc">Prettify, format, minify, and validate JSON syntax directly in your browser.</p>
+                        </div>
+                        <div class="tool-cta">
+                            <span>Open Tool</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+
+                    <!-- Base64 Encoder / Decoder -->
+                    <a href="tools/base64.html" class="tool-card" data-category="utilities" data-tags="base64 encode decode binary data uri">
+                        <div>
+                            <div class="card-top">
+                                <div class="tool-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="4 17 10 11 4 5"></polyline>
+                                        <line x1="12" y1="19" x2="20" y2="19"></line>
+                                    </svg>
+                                </div>
+                                <span class="tool-badge">Encoder</span>
+                            </div>
+                            <h3 class="tool-title">Base64 Converter</h3>
+                            <p class="tool-desc">Encode files or text to Base64 data strings, or decode Base64 back to plain text.</p>
+                        </div>
+                        <div class="tool-cta">
+                            <span>Open Tool</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+
+                    <!-- File Information & Inspector -->
+                    <a href="tools/file-info.html" class="tool-card" data-category="utilities" data-tags="file info metadata mime size hex bytes inspector">
+                        <div>
+                            <div class="card-top">
+                                <div class="tool-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                    </svg>
+                                </div>
+                                <span class="tool-badge">Inspector</span>
+                            </div>
+                            <h3 class="tool-title">File Information</h3>
+                            <p class="tool-desc">Inspect exact byte sizes, MIME types, modification timestamps, and binary hex headers.</p>
+                        </div>
+                        <div class="tool-cta">
+                            <span>Open Tool</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+
+                </div>
+
+                <div id="noResultsMsg" style="display: none; text-align: center; padding: 3rem 0; color: var(--text-muted);">
+                    <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">No tools match your search criteria.</p>
+                    <p style="font-size: 0.9rem;">Try searching for "PDF", "Word", "Excel", "JPG", or "Compress".</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Privacy & Architecture Guarantee Section -->
+        <section class="guarantee-section" id="privacy">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">100% Private By Architecture</h2>
+                    <p class="section-subtitle">Unlike cloud converters, your files never touch an external server.</p>
+                </div>
+
+                <div class="guarantee-grid">
+                    <div class="guarantee-item">
+                        <div class="guarantee-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                        </div>
+                        <h3 class="guarantee-title">Zero Server Uploads</h3>
+                        <p class="guarantee-desc">All calculations, rendering, and file encoding are done strictly within your browser's memory sandbox. Network monitors will confirm 0 bytes of your file leave your computer.</p>
+                    </div>
+
+                    <div class="guarantee-item">
+                        <div class="guarantee-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="8.5" cy="7" r="4"></circle>
+                                <line x1="18" y1="8" x2="23" y2="13"></line>
+                                <line x1="23" y1="8" x2="18" y2="13"></line>
+                            </svg>
+                        </div>
+                        <h3 class="guarantee-title">No Login or Registration</h3>
+                        <p class="guarantee-desc">No email, phone number, passwords, or cookies required. You will never be asked to create an account or sign into a dashboard to access your files.</p>
+                    </div>
+
+                    <div class="guarantee-item">
+                        <div class="guarantee-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="1 4 1 10 7 10"></polyline>
+                                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                            </svg>
+                        </div>
+                        <h3 class="guarantee-title">Automatic Resource Cleanup</h3>
+                        <p class="guarantee-desc">Temporary memory blobs and object URLs are revoked immediately after use or when resetting, ensuring clean memory management and zero data residue.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section class="tools-section" id="how-it-works">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">How Client-Side Conversion Works</h2>
+                    <p class="section-subtitle">Modern browser standards power instantaneous transformations.</p>
+                </div>
+
+                <div class="guarantee-grid">
+                    <div class="guarantee-item">
+                        <span style="font-size: 2rem; font-weight: 800; color: var(--accent-primary); display: block; margin-bottom: 0.5rem;">01</span>
+                        <h3 class="guarantee-title">Select or Drag File</h3>
+                        <p class="guarantee-desc">Upload from your desktop or phone. The browser reads the file into local memory using the HTML5 FileReader and Blob API.</p>
+                    </div>
+
+                    <div class="guarantee-item">
+                        <span style="font-size: 2rem; font-weight: 800; color: var(--accent-primary); display: block; margin-bottom: 0.5rem;">02</span>
+                        <h3 class="guarantee-title">Local Engine Execution</h3>
+                        <p class="guarantee-desc">HTML5 Canvas processes pixel operations; PDF-Lib, PDF.js, docx.js, Mammoth, and SheetJS compile and manipulate documents client-side.</p>
+                    </div>
+
+                    <div class="guarantee-item">
+                        <span style="font-size: 2rem; font-weight: 800; color: var(--accent-primary); display: block; margin-bottom: 0.5rem;">03</span>
+                        <h3 class="guarantee-title">Instant Download</h3>
+                        <p class="guarantee-desc">A local download is triggered instantly. Temporary memory handles are immediately cleared.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <div class="brand-logo">
+                        <div class="brand-logo-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                        </div>
+                        <span>FILETOOLS</span>
+                    </div>
+                    <p class="footer-tagline">
+                        Private, instantaneous, frontend-only file utility platform. No server uploads. Open standard browser tech.
+                    </p>
+                </div>
+
+                <div class="footer-links-group">
+                    <div>
+                        <h4 class="footer-col-title">PDF & Docs</h4>
+                        <ul class="footer-col-list">
+                            <li><a href="tools/pdf-to-word.html">PDF to Word (DOCX)</a></li>
+                            <li><a href="tools/word-to-pdf.html">Word to PDF</a></li>
+                            <li><a href="tools/pdf-merge.html">Merge PDF</a></li>
+                            <li><a href="tools/pdf-split.html">Split & Extract PDF</a></li>
+                            <li><a href="tools/pdf-rotate.html">Rotate PDF</a></li>
+                            <li><a href="tools/delete-pdf-pages.html">Delete PDF Pages</a></li>
+                            <li><a href="tools/pdf-to-images.html">PDF to Images</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="footer-col-title">Images & Spreadsheets</h4>
+                        <ul class="footer-col-list">
+                            <li><a href="tools/jpg-to-png.html">JPG to PNG</a></li>
+                            <li><a href="tools/png-to-jpg.html">PNG to JPG</a></li>
+                            <li><a href="tools/image-compressor.html">Image Compressor</a></li>
+                            <li><a href="tools/image-resizer.html">Image Resizer</a></li>
+                            <li><a href="tools/image-cropper.html">Image Cropper</a></li>
+                            <li><a href="tools/excel-to-csv.html">Excel to CSV</a></li>
+                            <li><a href="tools/csv-to-excel.html">CSV to Excel</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div>&copy; 2026 FILETOOLS. 100% Frontend-Only Architecture.</div>
+                <div>All operations run locally in browser memory.</div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>

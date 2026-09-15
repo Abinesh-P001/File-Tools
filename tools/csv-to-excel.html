@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV to Excel (XLSX) Converter — 100% Client-Side | FILETOOLS</title>
+    <meta name="description" content="Convert CSV files into Microsoft Excel spreadsheets (.xlsx) directly in your browser. Fast, private, zero server uploads.">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/tool.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <script src="../libraries/xlsx.full.min.js"></script>
+    <style>
+        .csv-textarea {
+            width: 100%;
+            height: 180px;
+            background: var(--surface-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            color: #fff;
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 0.88rem;
+            outline: none;
+            resize: vertical;
+            margin-top: 0.75rem;
+        }
+        .csv-textarea:focus {
+            border-color: var(--accent-primary);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="container nav-container">
+            <a href="../index.html" class="brand-logo">
+                <div class="brand-logo-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                </div>
+                <span>FILETOOLS</span>
+            </a>
+            <div class="client-badge-pill">
+                <span class="pulse-dot"></span>
+                <span>100% In-Browser</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="tool-layout">
+        <div class="container">
+            <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+                <a href="../index.html">Home</a>
+                <span class="breadcrumb-sep">/</span>
+                <a href="../index.html#tools">Spreadsheet Tools</a>
+                <span class="breadcrumb-sep">/</span>
+                <span>CSV to Excel</span>
+            </nav>
+
+            <div class="tool-header">
+                <div class="tool-header-badge">XLSX Workbook Generator</div>
+                <h1 class="tool-header-title">CSV to Excel (XLSX)</h1>
+                <p class="tool-header-desc">
+                    Transform comma-delimited data into an Excel spreadsheet workbook (.xlsx) directly in your browser.
+                </p>
+            </div>
+
+            <div class="tool-workspace">
+                <div id="errorAlert" class="alert-error" style="display: none;" role="alert"></div>
+
+                <div id="dropzone" class="upload-dropzone">
+                    <div class="dropzone-icon-circle">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="3" y1="9" x2="21" y2="9"></line>
+                            <line x1="9" y1="3" x2="9" y2="21"></line>
+                        </svg>
+                    </div>
+                    <div class="dropzone-title">Drop your CSV file here</div>
+                    <div class="dropzone-subtitle">or upload from your computer</div>
+                    <button type="button" class="btn-primary" id="selectFileBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span>SELECT CSV FILE</span>
+                    </button>
+                    <div class="dropzone-limits">Supported: .csv, .txt • Max 30 MB</div>
+                    <input type="file" id="fileInput" accept=".csv,text/csv,text/plain" style="display: none;">
+                </div>
+
+                <div id="fileInfoCard" style="display: none;"></div>
+
+                <div id="actionSection" style="display: block;">
+                    <div class="options-panel">
+                        <div class="options-heading">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="4 7 4 4 20 4 20 7"></polyline>
+                                <line x1="9" y1="20" x2="15" y2="20"></line>
+                                <line x1="12" y1="4" x2="12" y2="20"></line>
+                            </svg>
+                            <span>CSV Data (Upload above or paste below)</span>
+                        </div>
+                        <textarea id="csvTextArea" class="csv-textarea" placeholder="Name, Age, Department&#10;Alice, 29, Engineering&#10;Bob, 34, Marketing"></textarea>
+
+                        <div class="option-group" style="margin-top: 1rem;">
+                            <div class="option-label"><span>Workbook Filename</span></div>
+                            <input type="text" id="workbookNameInput" class="text-input" value="spreadsheet">
+                        </div>
+                    </div>
+
+                    <div class="action-controls">
+                        <button type="button" id="processBtn" class="btn-primary">
+                            <span>GENERATE EXCEL (.XLSX)</span>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="progressSection" class="progress-section" style="display: none;">
+                    <div class="progress-bar-container">
+                        <div id="progressBar" class="progress-bar-fill" style="width: 100%;"></div>
+                    </div>
+                    <div id="progressText" class="progress-text">Generating XLSX workbook...</div>
+                </div>
+
+                <div id="resultSection" class="result-section" style="display: none;">
+                    <div class="result-success-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        <span>Excel Workbook Created!</span>
+                    </div>
+
+                    <div class="result-stats"></div>
+
+                    <div class="result-actions">
+                        <button type="button" id="downloadBtn" class="btn-primary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            <span>DOWNLOAD .XLSX WORKBOOK</span>
+                        </button>
+                        <button type="button" id="resetBtn" class="btn-secondary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="1 4 1 10 7 10"></polyline>
+                                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                            </svg>
+                            <span>Convert Another File</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-bottom">
+            <div>&copy; 2026 FILETOOLS. 100% Frontend-Only Architecture.</div>
+            <div><a href="../index.html">Back to All Utilities</a></div>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { ToolUI } from '../js/ui.js';
+        import { csvToExcel } from '../js/spreadsheet-tools.js';
+        import { triggerDownload } from '../js/download.js';
+        import { readFileAsText, getBaseFilename, formatBytes } from '../js/file-utils.js';
+
+        const ui = new ToolUI({
+            dropzone: document.getElementById('dropzone'),
+            fileInput: document.getElementById('fileInput'),
+            fileInfoCard: document.getElementById('fileInfoCard'),
+            actionSection: document.getElementById('actionSection'),
+            processBtn: document.getElementById('processBtn'),
+            progressSection: document.getElementById('progressSection'),
+            progressBar: document.getElementById('progressBar'),
+            progressText: document.getElementById('progressText'),
+            resultSection: document.getElementById('resultSection'),
+            downloadBtn: document.getElementById('downloadBtn'),
+            resetBtn: document.getElementById('resetBtn'),
+            errorAlert: document.getElementById('errorAlert')
+        });
+
+        document.getElementById('selectFileBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('fileInput').click();
+        });
+
+        const csvTextArea = document.getElementById('csvTextArea');
+        const workbookNameInput = document.getElementById('workbookNameInput');
+        let selectedFile = null;
+
+        ui.onFilesSelected = async (files) => {
+            const file = files[0];
+            selectedFile = file;
+            ui.showFileInfo(file);
+
+            try {
+                const text = await readFileAsText(file);
+                csvTextArea.value = text;
+                workbookNameInput.value = getBaseFilename(file.name);
+            } catch (err) {
+                ui.showError('Could not read CSV file: ' + err.message);
+            }
+        };
+
+        document.getElementById('processBtn').addEventListener('click', async () => {
+            const text = csvTextArea.value.trim();
+            if (!text) {
+                ui.showError('CSV content cannot be empty.');
+                return;
+            }
+
+            const title = workbookNameInput.value.trim() || 'spreadsheet';
+
+            try {
+                ui.setProcessing(true);
+                const result = await csvToExcel(text, title);
+
+                const stats = ui.el.resultSection.querySelector('.result-stats');
+                if (stats) {
+                    stats.innerHTML = `
+                        <div class="stat-pill">Processed: <strong>${result.rowCount} rows</strong></div>
+                        <div class="stat-arrow">→</div>
+                        <div class="stat-pill stat-result">Excel Size: <strong>${formatBytes(result.blob.size)}</strong></div>
+                    `;
+                }
+
+                ui.showResult({
+                    blob: result.blob,
+                    filename: result.filename
+                });
+            } catch (err) {
+                ui.showError('XLSX generation failed: ' + err.message);
+            }
+        });
+
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            if (ui.resultBlob && ui.resultFilename) {
+                triggerDownload(ui.resultBlob, ui.resultFilename);
+            }
+        });
+
+        ui.onReset = () => {
+            selectedFile = null;
+            csvTextArea.value = '';
+            workbookNameInput.value = 'spreadsheet';
+        };
+    </script>
+</body>
+</html>

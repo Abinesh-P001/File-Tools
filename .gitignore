@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Environment Variables
+.env*
+!.env.example
+
+# Build Artifacts
+dist/
+build/
+.next/
+coverage/
+
+# Local database / test artifacts
+*.sqlite
+*.db
+test_samples/
+.DS_Store
+Thumbs.db

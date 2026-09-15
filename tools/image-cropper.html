@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Cropper with Aspect Presets — 100% Client-Side | FILETOOLS</title>
+    <meta name="description" content="Crop images with visual crop box, aspect ratio presets (1:1, 4:3, 16:9, Free), and export directly in browser.">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/tool.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <style>
+        .cropper-stage-wrapper {
+            position: relative;
+            max-width: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #000;
+            border-radius: var(--radius-md);
+            margin: 1.5rem 0;
+            user-select: none;
+            touch-action: none;
+        }
+
+        #cropCanvas {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            cursor: crosshair;
+        }
+
+        .cropper-badge-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="container nav-container">
+            <a href="../index.html" class="brand-logo">
+                <div class="brand-logo-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                </div>
+                <span>FILETOOLS</span>
+            </a>
+            <div class="client-badge-pill">
+                <span class="pulse-dot"></span>
+                <span>100% In-Browser</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="tool-layout">
+        <div class="container">
+            <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+                <a href="../index.html">Home</a>
+                <span class="breadcrumb-sep">/</span>
+                <a href="../index.html#tools">Image Tools</a>
+                <span class="breadcrumb-sep">/</span>
+                <span>Image Cropper</span>
+            </nav>
+
+            <div class="tool-header">
+                <div class="tool-header-badge">Interactive Canvas Cropper</div>
+                <h1 class="tool-header-title">Image Cropper</h1>
+                <p class="tool-header-desc">
+                    Select your crop frame visually. Choose popular aspect ratios or freely drag and crop in your browser.
+                </p>
+            </div>
+
+            <div class="tool-workspace">
+                <div id="errorAlert" class="alert-error" style="display: none;" role="alert"></div>
+
+                <div id="dropzone" class="upload-dropzone">
+                    <div class="dropzone-icon-circle">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 2v14a2 2 0 0 0 2 2h14"></path>
+                            <path d="M18 22V8a2 2 0 0 0-2-2H2"></path>
+                        </svg>
+                    </div>
+                    <div class="dropzone-title">Drop your image here to crop</div>
+                    <div class="dropzone-subtitle">JPG, PNG, or WebP</div>
+                    <button type="button" class="btn-primary" id="selectFileBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span>UPLOAD IMAGE</span>
+                    </button>
+                    <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" style="display: none;">
+                </div>
+
+                <div id="fileInfoCard" style="display: none;"></div>
+
+                <div id="actionSection" style="display: none;">
+                    <div class="options-panel">
+                        <div class="options-heading">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 14 14"></polyline>
+                            </svg>
+                            <span>Aspect Ratio Presets</span>
+                        </div>
+
+                        <div class="radio-tiles">
+                            <div class="radio-tile">
+                                <input type="radio" name="aspectRatio" id="ratioFree" value="free" checked>
+                                <label for="ratioFree">Freeform</label>
+                            </div>
+                            <div class="radio-tile">
+                                <input type="radio" name="aspectRatio" id="ratio11" value="1:1">
+                                <label for="ratio11">1:1 (Square)</label>
+                            </div>
+                            <div class="radio-tile">
+                                <input type="radio" name="aspectRatio" id="ratio43" value="4:3">
+                                <label for="ratio43">4:3 Standard</label>
+                            </div>
+                            <div class="radio-tile">
+                                <input type="radio" name="aspectRatio" id="ratio169" value="16:9">
+                                <label for="ratio169">16:9 Widescreen</label>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Cropping Area -->
+                        <div class="cropper-stage-wrapper" id="canvasWrapper">
+                            <canvas id="cropCanvas"></canvas>
+                        </div>
+                        <div class="cropper-badge-info">
+                            <span>Drag with mouse or touch to draw/adjust crop area</span>
+                            <span id="cropCoordsLabel">Size: 0 x 0 px</span>
+                        </div>
+                    </div>
+
+                    <div class="action-controls">
+                        <button type="button" id="processBtn" class="btn-primary">
+                            <span>APPLY CROP & EXPORT</span>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="progressSection" class="progress-section" style="display: none;">
+                    <div class="progress-bar-container">
+                        <div id="progressBar" class="progress-bar-fill" style="width: 100%;"></div>
+                    </div>
+                    <div id="progressText" class="progress-text">Exporting cropped image...</div>
+                </div>
+
+                <div id="resultSection" class="result-section" style="display: none;">
+                    <div class="result-success-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        <span>Cropping Complete!</span>
+                    </div>
+
+                    <div class="result-stats"></div>
+                    <div id="previewContainer" class="preview-container"></div>
+
+                    <div class="result-actions">
+                        <button type="button" id="downloadBtn" class="btn-primary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            <span>DOWNLOAD CROPPED IMAGE</span>
+                        </button>
+                        <button type="button" id="resetBtn" class="btn-secondary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="1 4 1 10 7 10"></polyline>
+                                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                            </svg>
+                            <span>Crop Another File</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-bottom">
+            <div>&copy; 2026 FILETOOLS. 100% Frontend-Only Architecture.</div>
+            <div><a href="../index.html">Back to All Utilities</a></div>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { ToolUI } from '../js/ui.js';
+        import { validateFile, VALIDATION_RULES } from '../js/validation.js';
+        import { cropImage } from '../js/image-tools.js';
+        import { triggerDownload } from '../js/download.js';
+        import { loadImage, urlRegistry } from '../js/file-utils.js';
+
+        const ui = new ToolUI({
+            dropzone: document.getElementById('dropzone'),
+            fileInput: document.getElementById('fileInput'),
+            fileInfoCard: document.getElementById('fileInfoCard'),
+            actionSection: document.getElementById('actionSection'),
+            processBtn: document.getElementById('processBtn'),
+            progressSection: document.getElementById('progressSection'),
+            progressBar: document.getElementById('progressBar'),
+            progressText: document.getElementById('progressText'),
+            resultSection: document.getElementById('resultSection'),
+            previewContainer: document.getElementById('previewContainer'),
+            downloadBtn: document.getElementById('downloadBtn'),
+            resetBtn: document.getElementById('resetBtn'),
+            errorAlert: document.getElementById('errorAlert')
+        });
+
+        document.getElementById('selectFileBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('fileInput').click();
+        });
+
+        const canvas = document.getElementById('cropCanvas');
+        const ctx = canvas.getContext('2d');
+        const cropCoordsLabel = document.getElementById('cropCoordsLabel');
+
+        let loadedImage = null;
+        let selectedFile = null;
+        let isDragging = false;
+        let startX = 0, startY = 0;
+        let cropRect = { x: 0, y: 0, w: 0, h: 0 };
+        let activeRatio = 'free';
+
+        document.querySelectorAll('input[name="aspectRatio"]').forEach(r => {
+            r.addEventListener('change', (e) => {
+                activeRatio = e.target.value;
+                if (loadedImage) initDefaultCrop();
+            });
+        });
+
+        function drawCanvas() {
+            if (!loadedImage) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(loadedImage, 0, 0);
+
+            // Darken outside
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Clear crop area
+            ctx.clearRect(cropRect.x, cropRect.y, cropRect.w, cropRect.h);
+            ctx.drawImage(
+                loadedImage,
+                cropRect.x, cropRect.y, cropRect.w, cropRect.h,
+                cropRect.x, cropRect.y, cropRect.w, cropRect.h
+            );
+
+            // Draw crop border & rule of thirds
+            ctx.strokeStyle = '#6366f1';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(cropRect.x, cropRect.y, cropRect.w, cropRect.h);
+
+            // Rule of thirds lines
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(cropRect.x + cropRect.w / 3, cropRect.y);
+            ctx.lineTo(cropRect.x + cropRect.w / 3, cropRect.y + cropRect.h);
+            ctx.moveTo(cropRect.x + (2 * cropRect.w) / 3, cropRect.y);
+            ctx.lineTo(cropRect.x + (2 * cropRect.w) / 3, cropRect.y + cropRect.h);
+            ctx.moveTo(cropRect.x, cropRect.y + cropRect.h / 3);
+            ctx.lineTo(cropRect.x + cropRect.w, cropRect.y + cropRect.h / 3);
+            ctx.moveTo(cropRect.x, cropRect.y + (2 * cropRect.h) / 3);
+            ctx.lineTo(cropRect.x + cropRect.w, cropRect.y + (2 * cropRect.h) / 3);
+            ctx.stroke();
+
+            cropCoordsLabel.textContent = `Crop size: ${Math.round(cropRect.w)} x ${Math.round(cropRect.h)} px`;
+        }
+
+        function initDefaultCrop() {
+            if (!loadedImage) return;
+            let w = canvas.width * 0.75;
+            let h = canvas.height * 0.75;
+
+            if (activeRatio === '1:1') {
+                const side = Math.min(w, h);
+                w = side; h = side;
+            } else if (activeRatio === '4:3') {
+                w = Math.min(canvas.width * 0.8, (canvas.height * 0.8) * (4/3));
+                h = w * (3/4);
+            } else if (activeRatio === '16:9') {
+                w = Math.min(canvas.width * 0.85, (canvas.height * 0.85) * (16/9));
+                h = w * (9/16);
+            }
+
+            cropRect = {
+                x: Math.round((canvas.width - w) / 2),
+                y: Math.round((canvas.height - h) / 2),
+                w: Math.round(w),
+                h: Math.round(h)
+            };
+            drawCanvas();
+        }
+
+        function getCanvasPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: (clientX - rect.left) * scaleX,
+                y: (clientY - rect.top) * scaleY
+            };
+        }
+
+        const onPointerDown = (e) => {
+            isDragging = true;
+            const pos = getCanvasPos(e);
+            startX = pos.x;
+            startY = pos.y;
+        };
+
+        const onPointerMove = (e) => {
+            if (!isDragging) return;
+            const pos = getCanvasPos(e);
+            let currentW = pos.x - startX;
+            let currentH = pos.y - startY;
+
+            if (activeRatio === '1:1') {
+                const maxD = Math.max(Math.abs(currentW), Math.abs(currentH));
+                currentW = currentW < 0 ? -maxD : maxD;
+                currentH = currentH < 0 ? -maxD : maxD;
+            } else if (activeRatio === '4:3') {
+                currentH = currentW * (3/4);
+            } else if (activeRatio === '16:9') {
+                currentH = currentW * (9/16);
+            }
+
+            const x = Math.min(startX, startX + currentW);
+            const y = Math.min(startY, startY + currentH);
+            const w = Math.abs(currentW);
+            const h = Math.abs(currentH);
+
+            if (w > 10 && h > 10) {
+                cropRect = {
+                    x: Math.max(0, Math.min(x, canvas.width - w)),
+                    y: Math.max(0, Math.min(y, canvas.height - h)),
+                    w: Math.min(w, canvas.width),
+                    h: Math.min(h, canvas.height)
+                };
+                drawCanvas();
+            }
+        };
+
+        const onPointerUp = () => {
+            isDragging = false;
+        };
+
+        canvas.addEventListener('mousedown', onPointerDown);
+        window.addEventListener('mousemove', onPointerMove);
+        window.addEventListener('mouseup', onPointerUp);
+
+        canvas.addEventListener('touchstart', onPointerDown, { passive: true });
+        window.addEventListener('touchmove', onPointerMove, { passive: true });
+        window.addEventListener('touchend', onPointerUp);
+
+        ui.onFilesSelected = async (files) => {
+            const file = files[0];
+            const validation = validateFile(file, VALIDATION_RULES.IMAGE_ANY);
+            if (!validation.valid) {
+                ui.showError(validation.error);
+                return;
+            }
+            selectedFile = file;
+            ui.showFileInfo(file);
+
+            try {
+                loadedImage = await loadImage(file);
+                canvas.width = loadedImage.naturalWidth || loadedImage.width;
+                canvas.height = loadedImage.naturalHeight || loadedImage.height;
+                initDefaultCrop();
+            } catch (err) {
+                ui.showError('Failed to load image into cropper: ' + err.message);
+            }
+        };
+
+        document.getElementById('processBtn').addEventListener('click', async () => {
+            if (!selectedFile || !cropRect.w || !cropRect.h) return;
+            try {
+                ui.setProcessing(true);
+                const result = await cropImage(selectedFile, {
+                    x: cropRect.x,
+                    y: cropRect.y,
+                    width: cropRect.w,
+                    height: cropRect.h
+                });
+
+                const previewUrl = urlRegistry.create(result.blob);
+                ui.el.previewContainer.innerHTML = `<img src="${previewUrl}" alt="Cropped Preview" class="preview-image">`;
+
+                ui.showResult({
+                    blob: result.blob,
+                    filename: result.filename,
+                    originalSize: selectedFile.size,
+                    compressedSize: result.blob.size
+                });
+            } catch (err) {
+                ui.showError('Crop export failed: ' + err.message);
+            }
+        });
+
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            if (ui.resultBlob && ui.resultFilename) {
+                triggerDownload(ui.resultBlob, ui.resultFilename);
+            }
+        });
+
+        ui.onReset = () => {
+            loadedImage = null;
+            selectedFile = null;
+            cropRect = { x: 0, y: 0, w: 0, h: 0 };
+        };
+    </script>
+</body>
+</html>

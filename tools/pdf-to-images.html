@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF to JPG / PNG Converter — 100% Client-Side | FILETOOLS</title>
+    <meta name="description" content="Convert PDF pages to high-resolution JPG or PNG images and ZIP archives directly in browser using PDF.js.">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/tool.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <!-- Local PDF.js & JSZip -->
+    <script src="../libraries/pdf.min.js"></script>
+    <script src="../libraries/jszip.min.js"></script>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="container nav-container">
+            <a href="../index.html" class="brand-logo">
+                <div class="brand-logo-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                </div>
+                <span>FILETOOLS</span>
+            </a>
+            <div class="client-badge-pill">
+                <span class="pulse-dot"></span>
+                <span>100% In-Browser</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="tool-layout">
+        <div class="container">
+            <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+                <a href="../index.html">Home</a>
+                <span class="breadcrumb-sep">/</span>
+                <a href="../index.html#tools">PDF Tools</a>
+                <span class="breadcrumb-sep">/</span>
+                <span>PDF to Images</span>
+            </nav>
+
+            <div class="tool-header">
+                <div class="tool-header-badge">High-Res Canvas Renderer</div>
+                <h1 class="tool-header-title">PDF to JPG / PNG</h1>
+                <p class="tool-header-desc">
+                    Extract each PDF page into high-resolution images. Download pages individually or bundle as a single ZIP.
+                </p>
+            </div>
+
+            <div class="tool-workspace">
+                <div id="errorAlert" class="alert-error" style="display: none;" role="alert"></div>
+
+                <div id="dropzone" class="upload-dropzone">
+                    <div class="dropzone-icon-circle">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <circle cx="10" cy="13" r="2"></circle>
+                            <path d="M20 17l-1.5-1.5a2 2 0 0 0-2.8 0L10 21"></path>
+                        </svg>
+                    </div>
+                    <div class="dropzone-title">Drop your PDF here to extract images</div>
+                    <div class="dropzone-subtitle">or select from your computer</div>
+                    <button type="button" class="btn-primary" id="selectFileBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span>SELECT PDF</span>
+                    </button>
+                    <div class="dropzone-limits">Supported: .pdf • Max 60 MB</div>
+                    <input type="file" id="fileInput" accept="application/pdf,.pdf" style="display: none;">
+                </div>
+
+                <div id="fileInfoCard" style="display: none;"></div>
+
+                <div id="actionSection" style="display: none;">
+                    <div class="options-panel">
+                        <div class="options-heading">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <span>Image Extraction Settings</span>
+                        </div>
+
+                        <div class="option-group">
+                            <div class="option-label"><span>Output Image Format</span></div>
+                            <div class="radio-tiles">
+                                <div class="radio-tile">
+                                    <input type="radio" name="imgFormat" id="formatPng" value="image/png" checked>
+                                    <label for="formatPng">PNG (Lossless)</label>
+                                </div>
+                                <div class="radio-tile">
+                                    <input type="radio" name="imgFormat" id="formatJpg" value="image/jpeg">
+                                    <label for="formatJpg">JPG (Compact)</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="option-group">
+                            <div class="option-label"><span>Rendering Quality / DPI</span></div>
+                            <div class="radio-tiles">
+                                <div class="radio-tile">
+                                    <input type="radio" name="dpiScale" id="dpi15" value="1.5">
+                                    <label for="dpi15">Standard (1.5x)</label>
+                                </div>
+                                <div class="radio-tile">
+                                    <input type="radio" name="dpiScale" id="dpi20" value="2.0" checked>
+                                    <label for="dpi20">High-Res (2.0x)</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-controls">
+                        <button type="button" id="processBtn" class="btn-primary">
+                            <span>RENDER PDF TO IMAGES</span>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="progressSection" class="progress-section" style="display: none;">
+                    <div class="progress-bar-container">
+                        <div id="progressBar" class="progress-bar-fill" style="width: 0%;"></div>
+                    </div>
+                    <div id="progressText" class="progress-text">Rendering pages into canvas memory...</div>
+                </div>
+
+                <div id="resultSection" class="result-section" style="display: none;">
+                    <div class="result-success-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        <span>Pages Rendered Successfully!</span>
+                    </div>
+
+                    <div class="result-stats"></div>
+
+                    <!-- PDF Pages Grid Preview -->
+                    <div id="previewContainer" class="preview-container" style="background: var(--surface-card); max-height: 480px;">
+                        <div id="pdfPageGrid" class="pdf-page-grid"></div>
+                    </div>
+
+                    <div class="result-actions">
+                        <button type="button" id="downloadBtn" class="btn-primary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            <span id="downloadBtnText">DOWNLOAD ALL AS ZIP</span>
+                        </button>
+                        <button type="button" id="resetBtn" class="btn-secondary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="1 4 1 10 7 10"></polyline>
+                                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                            </svg>
+                            <span>Convert Another PDF</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-bottom">
+            <div>&copy; 2026 FILETOOLS. 100% Frontend-Only Architecture.</div>
+            <div><a href="../index.html">Back to All Utilities</a></div>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { ToolUI } from '../js/ui.js';
+        import { validateFile, VALIDATION_RULES } from '../js/validation.js';
+        import { pdfToImages } from '../js/pdf-tools.js';
+        import { triggerDownload } from '../js/download.js';
+        import { formatBytes } from '../js/file-utils.js';
+
+        const ui = new ToolUI({
+            dropzone: document.getElementById('dropzone'),
+            fileInput: document.getElementById('fileInput'),
+            fileInfoCard: document.getElementById('fileInfoCard'),
+            actionSection: document.getElementById('actionSection'),
+            processBtn: document.getElementById('processBtn'),
+            progressSection: document.getElementById('progressSection'),
+            progressBar: document.getElementById('progressBar'),
+            progressText: document.getElementById('progressText'),
+            resultSection: document.getElementById('resultSection'),
+            downloadBtn: document.getElementById('downloadBtn'),
+            resetBtn: document.getElementById('resetBtn'),
+            errorAlert: document.getElementById('errorAlert')
+        });
+
+        document.getElementById('selectFileBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('fileInput').click();
+        });
+
+        const pdfPageGrid = document.getElementById('pdfPageGrid');
+        const downloadBtnText = document.getElementById('downloadBtnText');
+        let selectedFile = null;
+        let generatedResult = null;
+
+        ui.onFilesSelected = (files) => {
+            const file = files[0];
+            const validation = validateFile(file, VALIDATION_RULES.PDF);
+            if (!validation.valid) {
+                ui.showError(validation.error);
+                return;
+            }
+            selectedFile = file;
+            ui.showFileInfo(file);
+        };
+
+        document.getElementById('processBtn').addEventListener('click', async () => {
+            if (!selectedFile) return;
+            const format = document.querySelector('input[name="imgFormat"]:checked')?.value || 'image/png';
+            const scale = parseFloat(document.querySelector('input[name="dpiScale"]:checked')?.value || '2.0');
+
+            try {
+                ui.setProcessing(true, 0, 'Initializing PDF.js engine...');
+
+                generatedResult = await pdfToImages(selectedFile, {
+                    format,
+                    scale,
+                    onProgress: (current, total) => {
+                        const pct = Math.round((current / total) * 100);
+                        ui.setProcessing(true, pct, `Rendering page ${current} of ${total}...`);
+                    }
+                });
+
+                // Display rendered pages grid
+                pdfPageGrid.innerHTML = '';
+                generatedResult.pages.forEach(p => {
+                    const card = document.createElement('div');
+                    card.className = 'pdf-page-card';
+                    card.innerHTML = `
+                        <img src="${p.dataUrl}" alt="Page ${p.pageNumber}">
+                        <div class="page-label">Page ${p.pageNumber}</div>
+                        <button type="button" class="btn-secondary single-page-dl" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; margin-top: 0.35rem; width: 100%;">
+                            Download Page
+                        </button>
+                    `;
+                    card.querySelector('.single-page-dl').addEventListener('click', () => {
+                        triggerDownload(p.blob, p.filename);
+                    });
+                    pdfPageGrid.appendChild(card);
+                });
+
+                const isZip = !!generatedResult.zipBlob;
+                downloadBtnText.textContent = isZip ? `DOWNLOAD ALL (${generatedResult.pages.length} PAGES AS ZIP)` : 'DOWNLOAD IMAGE';
+
+                const stats = ui.el.resultSection.querySelector('.result-stats');
+                if (stats) {
+                    stats.innerHTML = `
+                        <div class="stat-pill">Rendered: <strong>${generatedResult.pages.length} page(s)</strong></div>
+                        <div class="stat-arrow">→</div>
+                        <div class="stat-pill stat-result">Total Output: <strong>${formatBytes(isZip ? generatedResult.zipBlob.size : generatedResult.pages[0].blob.size)}</strong></div>
+                    `;
+                }
+
+                ui.showResult({
+                    blob: isZip ? generatedResult.zipBlob : generatedResult.pages[0].blob,
+                    filename: generatedResult.filename
+                });
+            } catch (err) {
+                ui.showError('Rendering failed: ' + err.message);
+            }
+        });
+
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            if (ui.resultBlob && ui.resultFilename) {
+                triggerDownload(ui.resultBlob, ui.resultFilename);
+            }
+        });
+
+        ui.onReset = () => {
+            selectedFile = null;
+            generatedResult = null;
+            pdfPageGrid.innerHTML = '';
+        };
+    </script>
+</body>
+</html>

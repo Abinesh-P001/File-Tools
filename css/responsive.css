@@ -1,0 +1,172 @@
+/* ==========================================================================
+   Responsive Styles & Media Breakpoints
+   Smooth scaling for 320px, 375px, 425px, 768px, 1024px, 1440px+
+   ========================================================================== */
+
+/* Tablet & Smaller Laptops (<= 1024px) */
+@media (max-width: 1024px) {
+    .hero-title {
+        font-size: 2.75rem;
+    }
+    .tools-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.25rem;
+    }
+}
+
+/* Tablets (<= 768px) */
+@media (max-width: 768px) {
+    .nav-container {
+        height: 60px;
+    }
+
+    .mobile-nav-toggle {
+        display: block;
+    }
+
+    .main-nav {
+        position: fixed;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background: rgba(11, 15, 25, 0.98);
+        border-bottom: 1px solid var(--border-subtle);
+        flex-direction: column;
+        align-items: stretch;
+        padding: 1.5rem;
+        gap: 1.25rem;
+        display: none;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .main-nav.is-open {
+        display: flex;
+    }
+
+    .client-badge-pill {
+        align-self: flex-start;
+    }
+
+    .hero-section {
+        padding: 2.5rem 0 2rem;
+    }
+
+    .hero-title {
+        font-size: 2.2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .hero-quick-drop {
+        padding: 2rem 1.25rem;
+    }
+
+    .tool-header-title {
+        font-size: 2rem;
+    }
+
+    .tool-workspace {
+        padding: 1.5rem;
+    }
+
+    .upload-dropzone {
+        padding: 2.5rem 1rem;
+    }
+
+    .input-row {
+        grid-template-columns: 1fr;
+    }
+
+    .action-controls {
+        flex-direction: column;
+    }
+
+    .action-controls button,
+    .result-actions button {
+        width: 100%;
+    }
+
+    .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .category-pills {
+        justify-content: flex-start;
+        overflow-x: auto;
+    }
+
+    .footer-top {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .footer-links-group {
+        gap: 2rem;
+    }
+}
+
+/* Large Mobile (<= 425px) */
+@media (max-width: 425px) {
+    .container {
+        padding: 0 1rem;
+    }
+
+    .hero-title {
+        font-size: 1.85rem;
+    }
+
+    .brand-logo {
+        font-size: 1.15rem;
+    }
+
+    .tool-header-title {
+        font-size: 1.7rem;
+    }
+
+    .tool-workspace {
+        padding: 1.25rem 0.85rem;
+        border-radius: var(--radius-md);
+    }
+
+    .dropzone-title {
+        font-size: 1.15rem;
+    }
+
+    .radio-tiles {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .result-stats {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .stat-arrow {
+        display: none;
+    }
+}
+
+/* Small Mobile (<= 375px & 320px) */
+@media (max-width: 375px) {
+    .hero-title {
+        font-size: 1.65rem;
+    }
+
+    .tools-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .btn-primary, .btn-secondary {
+        padding: 0.8rem 1.25rem;
+        font-size: 0.9rem;
+    }
+
+    .selected-file-meta {
+        padding: 0.75rem;
+        gap: 0.75rem;
+    }
+}
