@@ -55,6 +55,9 @@
 html {
     font-size: 16px;
     scroll-behavior: smooth;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
 body {
@@ -65,8 +68,18 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    width: 100%;
+    max-width: 100%;
     overflow-x: hidden;
+    position: relative;
     -webkit-font-smoothing: antialiased;
+}
+
+main {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    flex: 1 0 auto;
 }
 
 /* Background Atmosphere Effect */
@@ -76,7 +89,8 @@ body::before {
     top: -200px;
     left: 50%;
     transform: translateX(-50%);
-    width: 800px;
+    width: 100%;
+    max-width: 800px;
     height: 600px;
     background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(11, 15, 25, 0) 70%);
     pointer-events: none;

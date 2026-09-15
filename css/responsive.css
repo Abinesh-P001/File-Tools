@@ -5,7 +5,7 @@
    ========================================================================== */
 
 /* Universal Safety Rules */
-html, body {
+html, body, main {
     width: 100%;
     max-width: 100%;
     overflow-x: hidden;
@@ -320,7 +320,7 @@ button, a, input, select, textarea, .upload-dropzone, .btn-primary, .btn-seconda
     }
 
     body::before {
-        width: 100vw;
+        width: 100%;
         max-width: 100%;
     }
 
