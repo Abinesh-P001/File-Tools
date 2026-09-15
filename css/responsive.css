@@ -1,35 +1,40 @@
 /* ==========================================================================
    Responsive Styles & Media Breakpoints — Mobile First & Touch Optimized
-   Tested & Hardened for 320px, 375px, 425px, 768px, 1024px, 1440px+
-   Supports iOS Safari, Android Chrome, Tablets, Laptops & Desktops
+   Hardened for 320px, 375px, 390px, 430px, 768px, 1024px, 1280px+
+   Zero Horizontal Scrolling • Auto-Reflowing Filter Grid • Touch Friendly
    ========================================================================== */
 
-/* Universal Mobile Safety Rules */
+/* Universal Safety Rules */
 html, body {
     max-width: 100vw;
     overflow-x: hidden !important;
     position: relative;
     -webkit-text-size-adjust: 100%;
+    margin: 0;
+    padding: 0;
 }
 
-* {
+*, *::before, *::after {
     box-sizing: border-box;
 }
 
 /* Touch targets and safe interaction */
-button, a, input, select, textarea, .upload-dropzone, .btn-primary, .btn-secondary {
+button, a, input, select, textarea, .upload-dropzone, .btn-primary, .btn-secondary, .category-pill {
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
 }
 
-/* Prevent long filenames from overflowing on mobile */
+/* Text wrapping to prevent overflow across all devices */
 .selected-file-name,
 .file-name,
 .stat-pill,
 .tool-header-title,
 .tool-title,
+.tool-desc,
 .dropzone-title,
-.breadcrumb-nav {
+.breadcrumb-nav,
+.hero-title,
+.hero-subtitle {
     overflow-wrap: anywhere;
     word-break: break-word;
 }
@@ -43,7 +48,7 @@ button, a, input, select, textarea, .upload-dropzone, .btn-primary, .btn-seconda
     -webkit-overflow-scrolling: touch;
 }
 
-/* Safe areas for notched phones (iPhone X/11/12/13/14/15/16, modern Android) */
+/* Safe areas for notched mobile devices (iPhone X/11/12/13/14/15/16, modern Android) */
 @supports (padding: max(0px)) {
     .site-footer {
         padding-bottom: max(2rem, env(safe-area-inset-bottom));
@@ -58,39 +63,78 @@ button, a, input, select, textarea, .upload-dropzone, .btn-primary, .btn-seconda
     }
 }
 
-/* Large Screens (>= 1280px) */
+/* Base Tools Grid Layout (Auto-reflowing without empty columns) */
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.tool-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* ==========================================================================
+   DESKTOP & LARGE SCREENS (>= 768px)
+   ========================================================================== */
+@media (min-width: 768px) {
+    .mobile-nav-toggle {
+        display: none !important;
+    }
+
+    .main-nav {
+        display: flex !important;
+        position: static !important;
+        flex-direction: row !important;
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+    }
+
+    .tools-grid {
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+        gap: 1.5rem;
+    }
+}
+
 @media (min-width: 1280px) {
     .tools-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+        gap: 1.5rem;
     }
 }
 
-/* Tablet & Smaller Laptops (<= 1024px) */
-@media (max-width: 1024px) {
-    .hero-title {
-        font-size: 2.75rem;
-    }
-    .tools-grid {
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        gap: 1.25rem;
-    }
+/* ==========================================================================
+   TABLET & MOBILE SCREENS (< 768px)
+   Strictly single column 1fr on mobile, 100% width, no overflow
+   ========================================================================== */
+@media (max-width: 767.98px) {
     .container {
-        padding: 0 1.5rem;
+        padding-left: 1rem !important; /* px-4 */
+        padding-right: 1rem !important;
+        width: 100% !important;
+        max-width: 100% !important;
     }
-}
 
-/* Tablets (<= 768px) */
-@media (max-width: 768px) {
+    /* Header & Mobile Navigation */
     .nav-container {
         height: 60px;
     }
 
     .mobile-nav-toggle {
-        display: flex;
+        display: flex !important;
         align-items: center;
         justify-content: center;
         min-width: 44px;
         min-height: 44px;
+        padding: 0.5rem;
     }
 
     .main-nav {
@@ -105,81 +149,72 @@ button, a, input, select, textarea, .upload-dropzone, .btn-primary, .btn-seconda
         padding: 1.5rem;
         gap: 1.25rem;
         display: none;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.7);
         z-index: 999;
     }
 
     .main-nav.is-open {
-        display: flex;
+        display: flex !important;
     }
 
     .client-badge-pill {
         align-self: flex-start;
     }
 
+    /* Hero Section < 768px: Single column, 100% full width */
     .hero-section {
-        padding: 2.5rem 0 2rem;
+        padding: 2.5rem 0 1.5rem;
+        width: 100%;
     }
 
     .hero-title {
-        font-size: 2.2rem;
+        font-size: 2rem;
+        width: 100%;
+        max-width: 100%;
+        line-height: 1.2;
     }
 
     .hero-subtitle {
-        font-size: 1rem;
-        margin-bottom: 2rem;
+        font-size: 0.95rem;
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 1.75rem;
     }
 
     .hero-quick-drop {
-        padding: 2rem 1.25rem;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 2rem 1rem;
+        margin: 0 auto 2rem;
+        min-width: 0;
     }
 
-    .tool-header-title {
-        font-size: 2rem;
-    }
-
-    .tool-workspace {
-        padding: 1.5rem;
-        margin: 0 0.5rem;
-        border-radius: var(--radius-md);
-    }
-
-    .upload-dropzone {
-        padding: 2.5rem 1rem;
-    }
-
-    .input-row {
-        grid-template-columns: 1fr;
-    }
-
-    .action-controls {
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-
-    .action-controls button,
-    .result-actions button {
-        width: 100%;
-        min-height: 48px;
-        justify-content: center;
-    }
-
+    /* Filter Bar < 768px */
     .filter-bar {
         flex-direction: column;
         align-items: stretch;
-        gap: 1rem;
+        width: 100%;
+        gap: 0.85rem;
     }
 
-    .search-wrapper {
+    .search-box {
         width: 100%;
+        min-width: 0 !important;
+    }
+
+    .search-input {
+        width: 100%;
+        min-width: 0;
     }
 
     .category-pills {
-        justify-content: flex-start;
+        width: 100%;
+        display: flex;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
-        padding-bottom: 0.5rem;
+        padding-bottom: 0.35rem;
+        gap: 0.4rem;
         flex-wrap: nowrap;
     }
 
@@ -190,73 +225,57 @@ button, a, input, select, textarea, .upload-dropzone, .btn-primary, .btn-seconda
     .category-pill {
         white-space: nowrap;
         flex-shrink: 0;
-        min-height: 40px;
-        display: inline-flex;
-        align-items: center;
+        min-height: 42px;
+        padding: 0.5rem 0.85rem;
+        font-size: 0.82rem;
     }
 
-    .footer-top {
-        flex-direction: column;
-        gap: 2rem;
+    /* MOBILE TOOLS GRID: Single-column 1fr, 100% full width */
+    .tools-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem;
+        width: 100% !important;
+        max-width: 100% !important;
     }
 
-    .footer-links-group {
-        gap: 2rem;
+    .tool-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        padding: 1.25rem;
     }
 
-    /* PDF and Image previews adapt smoothly */
-    iframe#pdfPreviewFrame {
-        height: 360px !important;
-    }
-
-    .pdf-preview-box {
-        width: 100%;
-    }
-}
-
-/* Large Mobile (<= 425px) */
-@media (max-width: 425px) {
-    .container {
-        padding: 0 0.85rem;
-    }
-
-    .hero-title {
-        font-size: 1.85rem;
-        letter-spacing: -0.02em;
-    }
-
-    .brand-logo {
-        font-size: 1.15rem;
-    }
-
+    /* Tool Pages < 768px */
     .tool-header-title {
-        font-size: 1.7rem;
-    }
-
-    .tool-header-desc {
-        font-size: 0.95rem;
+        font-size: 1.85rem;
     }
 
     .tool-workspace {
-        padding: 1.25rem 0.85rem;
+        padding: 1.25rem;
+        width: 100%;
+        max-width: 100%;
+        border-radius: var(--radius-md);
         margin: 0;
-        border-radius: var(--radius-sm);
     }
 
-    .dropzone-title {
-        font-size: 1.1rem;
+    .upload-dropzone {
+        padding: 2.25rem 1rem;
+        width: 100%;
+        min-width: 0;
     }
 
-    .dropzone-subtitle {
-        font-size: 0.85rem;
+    .action-controls,
+    .result-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+        width: 100%;
     }
 
-    .dropzone-limits {
-        font-size: 0.75rem;
-    }
-
-    .radio-tiles {
-        grid-template-columns: 1fr;
+    .action-controls button,
+    .result-actions button {
+        width: 100%;
+        min-height: 48px;
+        justify-content: center;
     }
 
     .options-grid {
@@ -268,6 +287,7 @@ button, a, input, select, textarea, .upload-dropzone, .btn-primary, .btn-seconda
         flex-direction: column;
         align-items: stretch;
         gap: 0.5rem;
+        width: 100%;
     }
 
     .stat-pill {
@@ -280,55 +300,62 @@ button, a, input, select, textarea, .upload-dropzone, .btn-primary, .btn-seconda
         display: none;
     }
 
-    .tools-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-
-    .btn-primary, .btn-secondary {
-        min-height: 48px;
-        font-size: 0.92rem;
-        padding: 0.85rem 1.2rem;
-    }
-
     iframe#pdfPreviewFrame {
-        height: 320px !important;
+        height: 340px !important;
+    }
+
+    .footer-top {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .footer-links-group {
+        gap: 2rem;
     }
 }
 
-/* Small Mobile (<= 375px & 320px) */
-@media (max-width: 375px) {
+/* ==========================================================================
+   SMALL PHONES (320px to 430px: iPhone SE, iPhone 12/13/14/15/16, Galaxy S)
+   ========================================================================== */
+@media (max-width: 430px) {
     .container {
-        padding: 0 0.65rem;
+        padding-left: 0.85rem !important;
+        padding-right: 0.85rem !important;
     }
 
     .hero-title {
-        font-size: 1.6rem;
+        font-size: 1.7rem;
+    }
+
+    .brand-logo {
+        font-size: 1.15rem;
     }
 
     .brand-logo span {
-        font-size: 1rem;
-    }
-
-    .client-badge-pill {
-        font-size: 0.72rem;
-        padding: 0.25rem 0.6rem;
+        font-size: 1.1rem;
     }
 
     .tool-header-title {
-        font-size: 1.5rem;
+        font-size: 1.55rem;
     }
 
-    .btn-primary, .btn-secondary {
-        padding: 0.75rem 1rem;
-        font-size: 0.88rem;
+    .tool-workspace {
+        padding: 1rem 0.75rem;
+    }
+
+    .dropzone-title {
+        font-size: 1.05rem;
+    }
+
+    .dropzone-subtitle {
+        font-size: 0.82rem;
     }
 
     .selected-file-meta {
-        padding: 0.65rem;
-        gap: 0.5rem;
+        padding: 0.75rem;
         flex-direction: column;
         align-items: flex-start;
+        gap: 0.5rem;
     }
 
     .selected-file-actions {
@@ -339,5 +366,30 @@ button, a, input, select, textarea, .upload-dropzone, .btn-primary, .btn-seconda
 
     iframe#pdfPreviewFrame {
         height: 280px !important;
+    }
+
+    .btn-primary, .btn-secondary {
+        min-height: 48px;
+        font-size: 0.88rem;
+        padding: 0.75rem 1rem;
+    }
+}
+
+/* ==========================================================================
+   EXTREME COMPACT (<= 320px)
+   ========================================================================== */
+@media (max-width: 320px) {
+    .container {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+
+    .hero-title {
+        font-size: 1.45rem;
+    }
+
+    .btn-primary, .btn-secondary {
+        font-size: 0.82rem;
+        padding: 0.7rem 0.85rem;
     }
 }

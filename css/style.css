@@ -100,11 +100,14 @@ button {
 /* Container */
 .container {
     width: 100%;
-    max-width: 1240px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
     position: relative;
     z-index: 1;
+    box-sizing: border-box;
 }
 
 /* Header & Navbar */
@@ -443,8 +446,12 @@ button {
 /* Tools Grid */
 .tools-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
     gap: 1.5rem;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .tool-card {
@@ -458,6 +465,10 @@ button {
     transition: all var(--transition-normal);
     position: relative;
     overflow: hidden;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .tool-card::after {
