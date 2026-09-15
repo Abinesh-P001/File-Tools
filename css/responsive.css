@@ -189,26 +189,46 @@ button, a, input, select, textarea, .upload-dropzone, .btn-primary, .btn-seconda
         min-width: 0;
     }
 
-    /* Filter Bar < 768px */
+    /* Filter Bar & Search Box Mobile Alignment (< 768px) */
     .filter-bar {
         flex-direction: column;
         align-items: stretch;
         width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        padding: 0.75rem 1rem;
+        margin-left: auto;
+        margin-right: auto;
         gap: 0.85rem;
+        overflow: hidden;
     }
 
     .search-box {
-        width: 100%;
+        width: 100% !important;
+        max-width: 100% !important;
         min-width: 0 !important;
+        flex: none !important;
+        box-sizing: border-box;
+        margin: 0;
+        position: relative;
+        left: 0;
+        right: 0;
     }
 
     .search-input {
-        width: 100%;
-        min-width: 0;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box;
+        display: block;
     }
 
     .category-pills {
         width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
         display: flex;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
@@ -391,5 +411,9 @@ button, a, input, select, textarea, .upload-dropzone, .btn-primary, .btn-seconda
     .btn-primary, .btn-secondary {
         font-size: 0.82rem;
         padding: 0.7rem 0.85rem;
+    }
+
+    .filter-bar {
+        padding: 0.65rem 0.65rem;
     }
 }
