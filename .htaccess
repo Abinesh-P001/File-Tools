@@ -22,4 +22,11 @@
     ExpiresByType image/png "access plus 0 seconds"
     ExpiresByType image/jpeg "access plus 0 seconds"
     ExpiresByType image/webp "access plus 0 seconds"
+    ExpiresByType font/woff2 "access plus 0 seconds"
+    ExpiresByType font/woff "access plus 0 seconds"
+</IfModule>
+
+<IfModule mod_mime.c>
+    AddType font/woff2 .woff2
+    AddType font/woff .woff
 </IfModule>
